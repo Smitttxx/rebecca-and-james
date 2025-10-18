@@ -621,7 +621,7 @@ export default function RSVPFormPage() {
             Thank you!
           </div>
           <div style={{ fontSize: '1rem', opacity: 0.9 }}>
-            Your RSVP has been submitted successfully. We can't wait to celebrate with you!
+            Your RSVP has been submitted successfully. We can&apos;t wait to celebrate with you!
           </div>
         </SuccessMessage>
       </Layout>
@@ -632,7 +632,7 @@ export default function RSVPFormPage() {
     <Layout activePage="rsvp">
       <PageHeader>
         <PageTitle>RSVP Responses</PageTitle>
-        <PageSubtitle>Please let us know if you'll be joining us for our special day</PageSubtitle>
+        <PageSubtitle>Please let us know if you&apos;ll be joining us for our special day</PageSubtitle>
         <PartyName>{party.partyName}</PartyName>
       </PageHeader>
 

@@ -5,47 +5,7 @@ import { theme } from '@/styles/theme'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCalendarAlt, faMapMarkerAlt, faHeart, faCamera, faEnvelope } from '@fortawesome/free-solid-svg-icons'
-
-const Container = styled.div`
-  min-height: 100vh;
-  background: linear-gradient(135deg, ${theme.colors.neutral.cream} 0%, ${theme.colors.primary.sageLight} 100%);
-  position: relative;
-  overflow: hidden;
-`
-
-const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: ${theme.spacing.lg} ${theme.spacing.xl};
-  position: relative;
-  z-index: 10;
-`
-
-const Logo = styled.div`
-  font-family: ${theme.fonts.script};
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: ${theme.colors.primary.sageDark};
-`
-
-const Nav = styled.nav`
-  display: flex;
-  gap: ${theme.spacing.xl};
-`
-
-const NavLink = styled(Link)`
-  font-family: ${theme.fonts.body};
-  font-size: 1rem;
-  color: ${theme.colors.neutral.darkGray};
-  text-decoration: none;
-  transition: color 0.3s ease;
-  
-  &:hover {
-    color: ${theme.colors.primary.sageDark};
-  }
-`
+import { faCalendarAlt, faMapMarkerAlt, faHeart } from '@fortawesome/free-solid-svg-icons'
 
 const HeroSection = styled.section`
   text-align: center;
@@ -253,26 +213,6 @@ const DetailText = styled.p`
 `
 
 
-const SunflowerDecoration = styled.div`
-  position: absolute;
-  top: 20%;
-  right: 10%;
-  width: 100px;
-  height: 100px;
-  background: ${theme.colors.accent.sunflower};
-  border-radius: ${theme.borderRadius.full};
-  opacity: 0.1;
-  
-  &::before {
-    content: '🌻';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-  }
-`
-
 export default function Home() {
   return (
     <Layout activePage="home">
@@ -330,11 +270,11 @@ export default function Home() {
             </p>
             <p>
               Three years later, James proposed during a sunset hike at their favorite trail, with a ring 
-              hidden in Rebecca's favorite hiking backpack. She said yes before he could even finish asking 
+              hidden in Rebecca&apos;s favorite hiking backpack. She said yes before he could even finish asking 
               the question!
             </p>
             <p>
-              Now, we're excited to celebrate this next chapter with our closest family and friends. 
+              Now, we&apos;re excited to celebrate this next chapter with our closest family and friends. 
               Thank you for being part of our journey.
             </p>
           </StoryText>

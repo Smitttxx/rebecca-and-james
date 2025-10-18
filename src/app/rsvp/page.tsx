@@ -265,7 +265,7 @@ export default function RSVPPage() {
       <Title>RSVP</Title>
 
       <Description>
-        We're so excited to celebrate with you! Please enter your invitation code below to access your personalized RSVP form.
+        We&apos;re so excited to celebrate with you! Please enter your invitation code below to access your personalized RSVP form.
       </Description>
 
       <CodeCard>

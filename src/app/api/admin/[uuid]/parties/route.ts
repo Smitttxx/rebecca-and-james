@@ -48,7 +48,7 @@ export async function POST(
         partyName,
         maxGuests: parseInt(maxGuests),
         guests: {
-          create: guests.map((guest: any) => ({
+          create: guests.map((guest: { firstName: string; lastName: string }) => ({
             firstName: guest.firstName,
             lastName: guest.lastName
           }))

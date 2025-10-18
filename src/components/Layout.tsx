@@ -264,7 +264,7 @@ export default function Layout({ children, activePage }: LayoutProps) {
 
       <Footer>
         <FooterTitle>Rebecca & James</FooterTitle>
-        <FooterText>October 15th, 2024 • Willow Creek Gardens</FooterText>
+        <FooterText>June 20th, 2026 • Willow Creek Gardens</FooterText>
         <SocialIcons>
           <SocialIcon>
             <FontAwesomeIcon icon={faCamera} />

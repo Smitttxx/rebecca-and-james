@@ -9,11 +9,12 @@ const ADMIN_UUIDS = [
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { uuid: string } }
+  { params }: { params: Promise<{ uuid: string }> }
 ) {
   try {
+    const { uuid } = await params
     // Check if UUID is valid
-    if (!ADMIN_UUIDS.includes(params.uuid)) {
+    if (!ADMIN_UUIDS.includes(uuid)) {
       return NextResponse.json(
         { error: 'Unauthorized access' },
         { status: 401 }

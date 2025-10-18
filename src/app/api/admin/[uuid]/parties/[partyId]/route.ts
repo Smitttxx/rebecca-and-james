@@ -9,11 +9,12 @@ const ADMIN_UUIDS = [
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { uuid: string; partyId: string } }
+  { params }: { params: Promise<{ uuid: string; partyId: string }> }
 ) {
   try {
+    const { uuid, partyId } = await params
     // Check if UUID is valid
-    if (!ADMIN_UUIDS.includes(params.uuid)) {
+    if (!ADMIN_UUIDS.includes(uuid)) {
       return NextResponse.json(
         { error: 'Unauthorized access' },
         { status: 401 }
@@ -23,7 +24,7 @@ export async function DELETE(
     // Delete the party (guests will be deleted automatically due to cascade)
     await prisma.party.delete({
       where: {
-        id: params.partyId
+        id: partyId
       }
     })
 

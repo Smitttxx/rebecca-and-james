@@ -149,16 +149,6 @@ const GuestName = styled.h3`
   }
 `
 
-const GuestCount = styled.p`
-  font-family: ${theme.fonts.body};
-  color: ${theme.colors.neutral.gray};
-  font-size: 0.8rem;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 0.9rem;
-  }
-`
-
 const RSVPToggle = styled.div`
   display: flex;
   gap: ${theme.spacing.sm};
@@ -551,7 +541,7 @@ export default function RSVPFormPage() {
     setLoading(false)
   }, [router])
 
-  const handleGuestChange = (guestId: string, field: string, value: any) => {
+  const handleGuestChange = (guestId: string, field: string, value: string | boolean) => {
     if (!party) return
     
     setParty({

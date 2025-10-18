@@ -70,36 +70,6 @@ const CodeCard = styled.div`
   }
 `
 
-const KeyIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background: ${theme.colors.secondary.gold};
-  border-radius: ${theme.borderRadius.full};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto ${theme.spacing.md};
-  font-size: 1.2rem;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
-`
-
-const CardTitle = styled.h2`
-  font-family: ${theme.fonts.heading};
-  font-size: 1.2rem;
-  color: ${theme.colors.primary.sageDark};
-  margin-bottom: ${theme.spacing.xs};
-  font-weight: 500;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1.4rem;
-  }
-`
-
 const CardDescription = styled.p`
   font-family: ${theme.fonts.body};
   color: ${theme.colors.neutral.gray};
@@ -161,20 +131,6 @@ const Input = styled.input`
     @media (min-width: ${theme.breakpoints.tablet}) {
       letter-spacing: 1px;
     }
-  }
-`
-
-const LockIcon = styled.div`
-  position: absolute;
-  right: ${theme.spacing.md};
-  top: 50%;
-  transform: translateY(-50%);
-  color: ${theme.colors.neutral.gray};
-  font-size: 1rem;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    right: ${theme.spacing.lg};
-    font-size: 1.2rem;
   }
 `
 

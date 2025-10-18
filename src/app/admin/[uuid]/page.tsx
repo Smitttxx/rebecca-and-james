@@ -2,7 +2,7 @@
 
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUsers, faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Layout from '@/components/Layout'
@@ -211,8 +211,8 @@ const LoadingMessage = styled.div`
 `
 
 const ErrorMessage = styled.div`
-  background: ${theme.colors.status.errorLight};
-  color: ${theme.colors.status.errorDark};
+  background: ${theme.colors.status.error}20;
+  color: ${theme.colors.status.error};
   padding: ${theme.spacing.lg};
   border-radius: ${theme.borderRadius.md};
   text-align: center;
@@ -257,11 +257,7 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
   const [error, setError] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
 
-  useEffect(() => {
-    fetchAdminData()
-  }, [uuid])
-
-  const fetchAdminData = async () => {
+  const fetchAdminData = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/admin/${uuid}`)
@@ -278,7 +274,11 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
     } finally {
       setLoading(false)
     }
-  }
+  }, [uuid])
+
+  useEffect(() => {
+    fetchAdminData()
+  }, [uuid, fetchAdminData])
 
   const handleDeleteParty = async (partyId: string) => {
     if (!confirm('Are you sure you want to delete this party and all its guests?')) {
@@ -300,7 +300,7 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
     }
   }
 
-  const handleAddParty = async (data: { partyName: string; maxGuests: number; guests: Guest[] }) => {
+  const handleAddParty = async (data: { partyName: string; maxGuests: number; guests: { firstName: string; lastName: string }[] }) => {
     try {
       const response = await fetch(`/api/admin/${uuid}/parties`, {
         method: 'POST',
@@ -348,7 +348,7 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
     <Layout activePage="admin">
       <AdminContainer>
         <AdminHeader>
-          <AdminTitle>RSVP Admin Dashboard</AdminTitle>
+          <AdminTitle>Rebecca & James&apos; Wedding Admin Dashboard</AdminTitle>
           <AdminSubtitle>Manage your wedding RSVPs and guest information</AdminSubtitle>
         </AdminHeader>
 

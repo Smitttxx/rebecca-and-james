@@ -2,8 +2,8 @@
 
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
-import Link from 'next/link'
 import Layout from '@/components/Layout'
+import Image from 'next/image'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCalendarAlt, faMapMarkerAlt, faHeart } from '@fortawesome/free-solid-svg-icons'
 
@@ -218,7 +218,7 @@ export default function Home() {
     <Layout activePage="home">
       <HeroSection>
         <Title>Rebecca & James</Title>
-        <Date>October 15th, 2024</Date>
+        <Date>June 20th, 2026</Date>
         <IntroText>
           Join us as we celebrate our love story and begin our journey as husband and wife.
         </IntroText>
@@ -232,8 +232,8 @@ export default function Home() {
             </DetailIcon>
             <DetailTitle>When</DetailTitle>
             <DetailText>
-              October 15th, 2024<br />
-              4:00 PM
+              June 20th, 2026<br />
+              2:00 PM
             </DetailText>
           </DetailCard>
           <DetailCard>
@@ -279,9 +279,11 @@ export default function Home() {
             </p>
           </StoryText>
           <StoryImage>
-            <img 
+            <Image 
               src="/api/placeholder/400/300" 
-              alt="Rebecca and James" 
+              alt="Rebecca and James"
+              width={400}
+              height={300}
             />
           </StoryImage>
         </StoryContent>

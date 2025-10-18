@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { theme } from '@/styles/theme'
 import { useState, useEffect, use } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUsers, faPlus, faEdit, faTrash, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { faUsers, faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import Layout from '@/components/Layout'
 import AddPartyModal from '@/components/AddPartyModal'
 
@@ -259,7 +259,7 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
 
   useEffect(() => {
     fetchAdminData()
-  }, [])
+  }, [uuid])
 
   const fetchAdminData = async () => {
     try {
@@ -300,7 +300,7 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
     }
   }
 
-  const handleAddParty = async (data: { partyName: string; maxGuests: number; guests: any[] }) => {
+  const handleAddParty = async (data: { partyName: string; maxGuests: number; guests: Guest[] }) => {
     try {
       const response = await fetch(`/api/admin/${uuid}/parties`, {
         method: 'POST',

@@ -68,8 +68,7 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: ${theme.spacing.sm} ${theme.spacing.md};
-  position: -webkit-sticky;
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -80,9 +79,11 @@ const Header = styled.header`
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   margin: 0;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
   
   @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.md} ${theme.spacing.lg};
+    padding: ${theme.spacing.lg} ${theme.spacing.lg};
   }
 `
 
@@ -199,8 +200,6 @@ const MainContent = styled.main`
   margin: 0;
   width: 100%;
   position: relative;
-  overflow: visible;
-  height: auto;
 `
 
 const BackgroundDecoration = styled.div`
@@ -425,7 +424,7 @@ export default function Layout({ children, activePage }: LayoutProps) {
             <BottomLeftDecoration />
             <BlottedPaperDecoration />
             
-            <MainContent>
+            <MainContent style={{ paddingTop: '50px' }}>
               {children}
             </MainContent>
           </Container>

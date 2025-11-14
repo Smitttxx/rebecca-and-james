@@ -12,11 +12,14 @@ const GlobalStyle = createGlobalStyle`
   html {
     max-width: 100vw;
     overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   body {
     max-width: 100vw;
     overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
     color: rgb(var(--foreground-rgb));
     background: linear-gradient(
@@ -25,6 +28,7 @@ const GlobalStyle = createGlobalStyle`
         rgb(var(--background-end-rgb))
       )
       rgb(var(--background-start-rgb));
+    -webkit-overflow-scrolling: touch;
   }
 
   a {

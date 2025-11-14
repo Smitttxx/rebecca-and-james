@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       party: {
         id: party.id,
         partyName: party.partyName,
-        maxGuests: party.maxGuests,
+        musicRequests: party.musicRequests,
         guests: party.guests.map(guest => ({
           id: guest.id,
           firstName: guest.firstName,
@@ -40,7 +40,13 @@ export async function POST(request: NextRequest) {
           phone: guest.phone,
           isAttending: guest.isAttending,
           dietaryRequirements: guest.dietaryRequirements,
-          menuSelection: guest.menuSelection
+          allergies: guest.allergies,
+          starterSelection: guest.starterSelection,
+          mainSelection: guest.mainSelection,
+          dessertSelection: guest.dessertSelection,
+          useKidsMenu: guest.useKidsMenu,
+          isChild: guest.isChild,
+          submittedAt: guest.submittedAt
         }))
       }
     })

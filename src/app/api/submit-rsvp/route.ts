@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: NextRequest) {
   try {
-    const { partyId, guests } = await request.json()
+    const { partyId, guests, musicRequests } = await request.json()
 
     if (!partyId || !guests || !Array.isArray(guests)) {
       return NextResponse.json(
@@ -24,19 +24,48 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Update guests
-    const updatePromises = guests.map(guest => 
-      prisma.guest.update({
-        where: { id: guest.id },
-        data: {
-          isAttending: guest.isAttending,
-          dietaryRequirements: guest.dietaryRequirements,
-          menuSelection: guest.menuSelection,
-          email: guest.email,
-          phone: guest.phone
+        // Get existing guests to check submission status
+        const existingGuests = await Promise.all(
+          guests.map(guest => 
+            prisma.guest.findUnique({ where: { id: guest.id } })
+          )
+        )
+        
+        // Update guests
+        const updatePromises = guests.map((guest, index) => {
+          const existingGuest = existingGuests[index]
+          
+          // Check if this is the first submission (has meal selections but no submittedAt)
+          const isFirstSubmission = !existingGuest?.submittedAt && 
+            guest.starterSelection && 
+            guest.mainSelection && 
+            guest.dessertSelection
+          
+          return prisma.guest.update({
+            where: { id: guest.id },
+            data: {
+              isAttending: guest.isAttending,
+              dietaryRequirements: guest.dietaryRequirements,
+              starterSelection: guest.starterSelection,
+              mainSelection: guest.mainSelection,
+              dessertSelection: guest.dessertSelection,
+              email: guest.email,
+              phone: guest.phone,
+              useKidsMenu: guest.useKidsMenu ?? false,
+              submittedAt: isFirstSubmission ? new Date() : existingGuest?.submittedAt
+            }
+          })
+        })
+
+        // Update party music requests
+        if (musicRequests !== undefined) {
+          await prisma.party.update({
+            where: { id: partyId },
+            data: {
+              musicRequests: musicRequests || null
+            }
+          })
         }
-      })
-    )
 
     await Promise.all(updatePromises)
 

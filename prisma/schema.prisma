@@ -12,15 +12,15 @@ datasource db {
 
 model Party {
   id          String   @id @default(cuid())
-  code        String   @unique
+  code        String   @unique // Invitation code
   partyName   String
-  maxGuests   Int
+  musicRequests String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   // Relations
   guests      Guest[]
-  
+
   @@map("parties")
 }
 
@@ -28,18 +28,29 @@ model Guest {
   id                String   @id @default(cuid())
   firstName         String
   lastName          String
+  fullName          String?  // Full name for display (e.g., "James-Thomas Cupit")
+  guestTag          String?  // Role: Bride, Groom, Groomsmen, Ring Bearer, Child, Bride Family, Groom Family, Best Man, Bridesmaid, MOH, Friend, etc.
+  isChild           Boolean  @default(false)
+  useKidsMenu       Boolean  @default(false) // For children: true = kids menu, false = adult menu
   email             String?
   phone             String?
   isAttending       Boolean?
   dietaryRequirements String?
-  menuSelection     String?
+  allergies         String?  // Specific allergies
+  starterSelection  String?
+  mainSelection     String?
+  dessertSelection  String?
+  giftReceived      Boolean  @default(false)
+  thankYouSent      Boolean  @default(false)
+  confirmed         Boolean  @default(false)
+  submittedAt       DateTime? // When RSVP was first submitted
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  
+
   // Relations
   partyId           String
   party             Party    @relation(fields: [partyId], references: [id], onDelete: Cascade)
-  
+
   @@map("guests")
 }
 

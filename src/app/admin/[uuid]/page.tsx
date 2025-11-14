@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { theme } from '@/styles/theme'
 import { useState, useEffect, use, useCallback } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUsers, faPlus, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faUsers, faPlus, faEdit, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons'
 import Layout from '@/components/Layout'
 import AddPartyModal from '@/components/AddPartyModal'
 
@@ -220,20 +220,75 @@ const ErrorMessage = styled.div`
   margin-bottom: ${theme.spacing.lg};
 `
 
+const SearchContainer = styled.div`
+  margin-bottom: ${theme.spacing.lg};
+  position: relative;
+`
+
+const SearchInput = styled.input`
+  width: 100%;
+  padding: ${theme.spacing.md} ${theme.spacing.lg};
+  padding-left: 3rem;
+  border: 2px solid ${theme.colors.primary.sageLight};
+  border-radius: ${theme.borderRadius.md};
+  font-family: ${theme.fonts.body};
+  font-size: 1rem;
+  color: ${theme.colors.neutral.darkGray};
+  background: ${theme.colors.neutral.white};
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: ${theme.colors.primary.sageDark};
+    box-shadow: 0 0 0 3px ${theme.colors.primary.sageLight}40;
+  }
+  
+  &::placeholder {
+    color: ${theme.colors.neutral.gray};
+  }
+`
+
+const SearchIcon = styled.div`
+  position: absolute;
+  left: ${theme.spacing.md};
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${theme.colors.neutral.gray};
+  pointer-events: none;
+`
+
+const SearchResultsCount = styled.div`
+  margin-top: ${theme.spacing.sm};
+  font-family: ${theme.fonts.body};
+  font-size: 0.9rem;
+  color: ${theme.colors.neutral.gray};
+  text-align: right;
+`
+
 interface Guest {
   id: string
   firstName: string
   lastName: string
+  fullName?: string
+  guestTag?: string
+  isChild?: boolean
+  useKidsMenu?: boolean
   isAttending?: boolean
   dietaryRequirements?: string
-  menuSelection?: string
+  allergies?: string
+  starterSelection?: string
+  mainSelection?: string
+  dessertSelection?: string
+  email?: string
+  phone?: string
+  submittedAt?: string
 }
 
 interface Party {
   id: string
   code: string
   partyName: string
-  maxGuests: number
+  musicRequests?: string
   guests: Guest[]
 }
 
@@ -242,6 +297,11 @@ interface AdminStats {
   totalGuests: number
   attendingGuests: number
   totalResponses: number
+  menuCounts?: {
+    starters: Record<string, number>
+    mains: Record<string, number>
+    desserts: Record<string, number>
+  }
 }
 
 export default function AdminPage({ params }: { params: Promise<{ uuid: string }> }) {
@@ -256,6 +316,8 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [editingParty, setEditingParty] = useState<Party | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const fetchAdminData = useCallback(async () => {
     try {
@@ -300,7 +362,7 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
     }
   }
 
-  const handleAddParty = async (data: { partyName: string; maxGuests: number; guests: { firstName: string; lastName: string }[] }) => {
+  const handleAddParty = async (data: { partyName: string; code?: string; guests: { firstName: string; lastName: string; isChild: boolean }[] }) => {
     try {
       const response = await fetch(`/api/admin/${uuid}/parties`, {
         method: 'POST',
@@ -311,13 +373,40 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create party')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to create party')
       }
 
       setShowAddModal(false)
       await fetchAdminData() // Refresh data
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create party')
+      // Re-throw the error so the modal can handle it
+      throw err
+    }
+  }
+
+  const handleEditParty = async (data: { partyName: string; code?: string; guests: { firstName: string; lastName: string; isChild: boolean }[] }) => {
+    if (!editingParty) return
+
+    try {
+      const response = await fetch(`/api/admin/${uuid}/parties/${editingParty.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to update party')
+      }
+
+      setEditingParty(null)
+      await fetchAdminData() // Refresh data
+    } catch (err) {
+      // Re-throw the error so the modal can handle it
+      throw err
     }
   }
 
@@ -371,6 +460,44 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
           </StatCard>
         </StatsGrid>
 
+        {stats.menuCounts && (
+          <>
+            <SectionTitle>Menu Option Counts</SectionTitle>
+            <PartiesList>
+              <PartyCard>
+                <PartyName style={{ marginBottom: theme.spacing.md }}>Starters</PartyName>
+                <GuestDetails>
+                  {Object.entries(stats.menuCounts.starters).map(([item, count]) => (
+                    <div key={item} style={{ marginBottom: theme.spacing.xs }}>
+                      {item}: <strong>{count}</strong>
+                    </div>
+                  ))}
+                </GuestDetails>
+              </PartyCard>
+              <PartyCard>
+                <PartyName style={{ marginBottom: theme.spacing.md }}>Mains</PartyName>
+                <GuestDetails>
+                  {Object.entries(stats.menuCounts.mains).map(([item, count]) => (
+                    <div key={item} style={{ marginBottom: theme.spacing.xs }}>
+                      {item}: <strong>{count}</strong>
+                    </div>
+                  ))}
+                </GuestDetails>
+              </PartyCard>
+              <PartyCard>
+                <PartyName style={{ marginBottom: theme.spacing.md }}>Desserts</PartyName>
+                <GuestDetails>
+                  {Object.entries(stats.menuCounts.desserts).map(([item, count]) => (
+                    <div key={item} style={{ marginBottom: theme.spacing.xs }}>
+                      {item}: <strong>{count}</strong>
+                    </div>
+                  ))}
+                </GuestDetails>
+              </PartyCard>
+            </PartiesList>
+          </>
+        )}
+
         <SectionTitle>All Parties & Guests</SectionTitle>
 
         <AddButton onClick={() => setShowAddModal(true)}>
@@ -378,16 +505,80 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
           Add New Party
         </AddButton>
 
+        <SearchContainer>
+          <SearchIcon>
+            <FontAwesomeIcon icon={faSearch} />
+          </SearchIcon>
+          <SearchInput
+            type="text"
+            placeholder="Search by party name, code, or guest name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </SearchContainer>
+
         <PartiesList>
-          {parties.map((party) => (
+          {(() => {
+            // Filter parties based on search term
+            const filteredParties = searchTerm.trim() === '' 
+              ? parties 
+              : parties.filter(party => {
+                  const searchLower = searchTerm.toLowerCase().trim()
+                  
+                  // Check party name and code
+                  if (
+                    party.partyName.toLowerCase().includes(searchLower) ||
+                    party.code.toLowerCase().includes(searchLower)
+                  ) {
+                    return true
+                  }
+                  
+                  // Check guest names
+                  return party.guests.some(guest => {
+                    const fullName = `${guest.firstName} ${guest.lastName}`.toLowerCase()
+                    const firstName = guest.firstName.toLowerCase()
+                    const lastName = guest.lastName.toLowerCase()
+                    const fullNameDisplay = guest.fullName?.toLowerCase() || ''
+                    
+                    return (
+                      fullName.includes(searchLower) ||
+                      firstName.includes(searchLower) ||
+                      lastName.includes(searchLower) ||
+                      fullNameDisplay.includes(searchLower)
+                    )
+                  })
+                })
+            
+            return (
+              <>
+                {searchTerm.trim() !== '' && (
+                  <SearchResultsCount>
+                    Found {filteredParties.length} {filteredParties.length === 1 ? 'party' : 'parties'}
+                  </SearchResultsCount>
+                )}
+                {filteredParties.length === 0 ? (
+                  <PartyCard>
+                    <div style={{ textAlign: 'center', padding: theme.spacing.xl, color: theme.colors.neutral.gray }}>
+                      {searchTerm.trim() === '' 
+                        ? 'No parties found' 
+                        : `No parties or guests found matching "${searchTerm}"`}
+                    </div>
+                  </PartyCard>
+                ) : (
+                  filteredParties.map((party) => (
             <PartyCard key={party.id}>
               <PartyHeader>
                 <PartyInfo>
                   <PartyName>{party.partyName}</PartyName>
                   <PartyCode>Code: {party.code}</PartyCode>
+                  {party.musicRequests && (
+                    <div style={{ marginTop: theme.spacing.xs, fontSize: '0.85rem', color: theme.colors.neutral.gray, fontStyle: 'italic' }}>
+                      🎵 Music: {party.musicRequests}
+                    </div>
+                  )}
                 </PartyInfo>
                 <PartyActions>
-                  <ActionButton>
+                  <ActionButton onClick={() => setEditingParty(party)}>
                     <FontAwesomeIcon icon={faEdit} />
                   </ActionButton>
                   <ActionButton 
@@ -402,32 +593,91 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
               <GuestsList>
                 {party.guests.map((guest) => (
                   <GuestCard key={guest.id}>
-                    <GuestName>{guest.firstName} {guest.lastName}</GuestName>
+                    <GuestName>
+                      {guest.firstName} {guest.lastName}
+                      {guest.isChild && ' 👶'}
+                    </GuestName>
                     <GuestDetails>
+                      {guest.isChild && (
+                        <div>👶 Child {guest.useKidsMenu ? '(Kids Menu)' : '(Adult Menu)'}</div>
+                      )}
+                      {guest.guestTag && (
+                        <div>🏷️ {guest.guestTag}</div>
+                      )}
                       <div>
                         Status: {guest.isAttending === true ? '✅ Attending' : 
                                 guest.isAttending === false ? '❌ Not Attending' : 
                                 '⏳ No Response'}
                       </div>
-                      {guest.menuSelection && (
-                        <div>🍽️ {guest.menuSelection}</div>
+                      {guest.isAttending && guest.starterSelection && (
+                        <div>🍽️ Starter: <strong>{guest.starterSelection}</strong></div>
+                      )}
+                      {guest.isAttending && guest.mainSelection && (
+                        <div>🍽️ Main: <strong>{guest.mainSelection}</strong></div>
+                      )}
+                      {guest.isAttending && guest.dessertSelection && (
+                        <div>🍽️ Dessert: <strong>{guest.dessertSelection}</strong></div>
                       )}
                       {guest.dietaryRequirements && (
-                        <div>🥗 {guest.dietaryRequirements}</div>
+                        <div>🥗 Dietary: {guest.dietaryRequirements}</div>
+                      )}
+                      {guest.allergies && (
+                        <div>⚠️ Allergies: {guest.allergies}</div>
+                      )}
+                      {guest.email && (
+                        <div>📧 {guest.email}</div>
+                      )}
+                      {guest.phone && (
+                        <div>📞 {guest.phone}</div>
+                      )}
+                      {guest.submittedAt && (
+                        <div style={{ fontSize: '0.75rem', color: theme.colors.neutral.gray, marginTop: theme.spacing.xs }}>
+                          Submitted: {new Date(guest.submittedAt).toLocaleDateString('en-GB', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}
+                        </div>
                       )}
                     </GuestDetails>
                   </GuestCard>
                 ))}
               </GuestsList>
             </PartyCard>
-          ))}
+                  ))
+                )}
+              </>
+            )
+          })()}
         </PartiesList>
 
         <AddPartyModal
           isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddParty}
+          adminUuid={uuid}
         />
+
+        {editingParty && (
+          <AddPartyModal
+            key={editingParty.id}
+            isOpen={true}
+            onClose={() => setEditingParty(null)}
+            onSubmit={handleEditParty}
+            adminUuid={uuid}
+            initialData={{
+              partyName: editingParty.partyName,
+              code: editingParty.code,
+              id: editingParty.id,
+              guests: editingParty.guests.map(g => ({ 
+                id: g.id,
+                firstName: g.firstName, 
+                lastName: g.lastName,
+                isChild: g.isChild || false
+              }))
+            }}
+          />
+        )}
       </AdminContainer>
     </Layout>
   )

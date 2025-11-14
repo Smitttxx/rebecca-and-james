@@ -5,79 +5,171 @@ import { theme } from '@/styles/theme'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Layout from '@/components/Layout'
+import Image from 'next/image'
 
-const SunflowerIcon = styled.div`
-  width: 60px;
-  height: 60px;
-  background: ${theme.colors.accent.sunflower};
-  border-radius: ${theme.borderRadius.full};
+const InvitationContainer = styled.div`
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin: 0 auto ${theme.spacing.lg};
-  font-size: 1.5rem;
-  box-shadow: ${theme.shadows.sm};
+  align-items: center;
+  background: linear-gradient(135deg, ${theme.colors.neutral.cream} 0%, ${theme.colors.primary.sageLight} 100%);
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    background-image: url('/photo-1596751303147-05d69e653ca4 (1).avif');
+    background-size: cover;
+    background-position: center top -230px;
+    background-repeat: no-repeat;
+  }
+`
+
+const BackgroundImage = styled(Image)`
+  display: none;
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    display: block;
+    width: 100%;
+    height: auto;
+    position: relative;
+    top: -230px;
+    margin-bottom: -230px;
+  }
+`
+
+const FormOverlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: ${theme.spacing.lg};
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    align-items: center;
+    padding-top: 0;
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    top: 45%;
+  }
+`
+
+
+const InvitationCard = styled.div`
+  width: 85%;
+  max-width: 500px;
+  background: ${theme.colors.neutral.white};
+  border: 2px solid ${theme.colors.secondary.gold};
+  border-radius: ${theme.borderRadius.lg};
+  padding: ${theme.spacing.md} ${theme.spacing.sm};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  box-shadow: ${theme.shadows.md};
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    width: 80%;
+    max-width: 550px;
+    padding: ${theme.spacing.xxl};
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    width: 70%;
+    max-width: 600px;
+    padding: ${theme.spacing.xxxl};
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+`
+
+const SunflowerDecoration = styled.div`
+  width: 50px;
+  height: 50px;
+  background-image: url('/sunflower.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: ${theme.spacing.sm};
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     width: 80px;
     height: 80px;
-    font-size: 2rem;
+    margin-bottom: ${theme.spacing.md};
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    width: 100px;
+    height: 100px;
+    margin-bottom: ${theme.spacing.md};
   }
 `
 
-const Title = styled.h1`
-  font-family: ${theme.fonts.script};
-  font-size: 2rem;
+const InvitationTitle = styled.h1`
+  font-family: ${theme.fonts.serif};
+  font-size: 1.8rem;
   font-weight: 400;
-  color: ${theme.colors.primary.sageDark};
+  color: ${theme.colors.primary.eucalyptusDark};
   margin-bottom: ${theme.spacing.sm};
   text-align: center;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 2rem;
+    margin-bottom: ${theme.spacing.md};
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
     font-size: 2.5rem;
+    margin-bottom: ${theme.spacing.md};
   }
 `
 
-const Description = styled.p`
+const InvitationSubtitle = styled.p`
   font-family: ${theme.fonts.body};
-  font-size: 0.9rem;
-  color: ${theme.colors.neutral.gray};
+  font-size: 0.85rem;
+  color: ${theme.colors.primary.eucalyptusDark};
   text-align: center;
-  max-width: 400px;
-  margin: 0 auto ${theme.spacing.xl};
+  margin-bottom: ${theme.spacing.xs};
   line-height: 1.5;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     font-size: 1rem;
-    max-width: 500px;
+    margin-bottom: ${theme.spacing.sm};
+    line-height: 1.6;
   }
-`
-
-const CodeCard = styled.div`
-  background: ${theme.colors.neutral.white};
-  border-radius: ${theme.borderRadius.lg};
-  padding: ${theme.spacing.lg};
-  box-shadow: ${theme.shadows.sm};
-  text-align: center;
-  max-width: 350px;
-  width: 100%;
-  margin: 0 auto;
-  border: 1px solid ${theme.colors.primary.sageLight};
   
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.xl};
-    max-width: 400px;
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    font-size: 1.1rem;
+    margin-bottom: ${theme.spacing.sm};
   }
 `
 
-const CardDescription = styled.p`
+const CodeHint = styled.p`
   font-family: ${theme.fonts.body};
+  font-size: 0.75rem;
   color: ${theme.colors.neutral.gray};
-  margin-bottom: ${theme.spacing.lg};
-  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: ${theme.spacing.md};
+  font-style: italic;
+  line-height: 1.5;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 0.85rem;
+    margin-bottom: ${theme.spacing.lg};
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
     font-size: 0.9rem;
+    margin-bottom: ${theme.spacing.xl};
   }
 `
 
@@ -85,15 +177,27 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing.md};
+  width: 100%;
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    gap: ${theme.spacing.lg};
+  }
 `
 
 const Label = styled.label`
-  font-family: ${theme.fonts.body};
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: ${theme.colors.primary.sageDark};
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  font-family: ${theme.fonts.serif};
+  font-size: 1rem;
+  font-weight: 500;
+  color: ${theme.colors.primary.eucalyptusDark};
+  text-align: center;
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 1.1rem;
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    font-size: 1.2rem;
+  }
 `
 
 const InputContainer = styled.div`
@@ -102,11 +206,11 @@ const InputContainer = styled.div`
 
 const Input = styled.input`
   width: 100%;
-  padding: ${theme.spacing.md};
-  border: 2px solid ${theme.colors.primary.sageLight};
-  border-radius: ${theme.borderRadius.md};
+  padding: ${theme.spacing.sm} ${theme.spacing.md};
+  border: 1px solid ${theme.colors.primary.eucalyptusLight};
+  border-radius: ${theme.borderRadius.sm};
   font-family: ${theme.fonts.body};
-  font-size: 1rem;
+  font-size: 0.9rem;
   text-align: center;
   letter-spacing: 1px;
   color: ${theme.colors.neutral.darkGray};
@@ -114,14 +218,14 @@ const Input = styled.input`
   transition: border-color 0.3s ease;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.lg};
-    font-size: 1.1rem;
+    padding: ${theme.spacing.md} ${theme.spacing.lg};
+    font-size: 1rem;
     letter-spacing: 2px;
   }
   
   &:focus {
     outline: none;
-    border-color: ${theme.colors.primary.sageDark};
+    border-color: ${theme.colors.primary.eucalyptusDark};
   }
   
   &::placeholder {
@@ -135,58 +239,60 @@ const Input = styled.input`
 `
 
 const SubmitButton = styled.button`
-  background: linear-gradient(135deg, ${theme.colors.primary.sageDark}, ${theme.colors.primary.sage});
+  background: ${theme.colors.primary.eucalyptusDark};
   color: ${theme.colors.neutral.white};
   border: none;
-  padding: ${theme.spacing.md} ${theme.spacing.lg};
-  border-radius: ${theme.borderRadius.md};
-  font-family: ${theme.fonts.body};
+  padding: ${theme.spacing.sm} ${theme.spacing.md};
+  border-radius: ${theme.borderRadius.sm};
+  font-family: ${theme.fonts.serif};
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: ${theme.shadows.sm};
   
   @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.lg} ${theme.spacing.xl};
+    padding: ${theme.spacing.md} ${theme.spacing.lg};
     font-size: 1rem;
   }
   
   &:hover {
-    background: linear-gradient(135deg, ${theme.colors.primary.sage}, ${theme.colors.primary.sageLight});
+    background: ${theme.colors.primary.eucalyptus};
     transform: translateY(-1px);
-    box-shadow: ${theme.shadows.md};
   }
   
   &:disabled {
-    background: ${theme.colors.neutral.gray};
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-    box-shadow: ${theme.shadows.sm};
   }
 `
 
 const ErrorMessage = styled.div`
   color: ${theme.colors.status.error};
   font-family: ${theme.fonts.body};
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   text-align: center;
   margin-top: ${theme.spacing.sm};
   
   @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
 `
 
 export default function RSVPPage() {
   const [code, setCode] = useState('')
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
+    if (!code.trim()) {
+      setError('Please enter your invitation code')
+      return
+    }
+
+    setIsLoading(true)
     setError('')
 
     try {
@@ -195,64 +301,72 @@ export default function RSVPPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code: code.trim() }),
       })
 
       const data = await response.json()
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Invalid code')
+      if (response.ok) {
+        // Store party data in session storage
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('partyData', JSON.stringify(data.party))
+        }
+        router.push('/rsvp/form')
+      } else {
+        setError(data.error || 'Invalid invitation code')
       }
-
-      // Store party data in sessionStorage and redirect to form
-      sessionStorage.setItem('partyData', JSON.stringify(data.party))
-      router.push('/rsvp/form')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong')
+    } catch {
+      setError('Something went wrong. Please try again.')
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
   }
 
   return (
     <Layout activePage="rsvp">
-      <SunflowerIcon>🌻</SunflowerIcon>
-
-      <Title>RSVP</Title>
-
-      <Description>
-        We&apos;re so excited to celebrate with you! Please enter your invitation code below to access your personalized RSVP form.
-      </Description>
-
-      <CodeCard>
-        <CardDescription>
-          Please check your invitation for your unique RSVP code.
-        </CardDescription>
-
-        <Form onSubmit={handleSubmit}>
-          <Label htmlFor="inviteCode">Invitation Code</Label>
-
-          <InputContainer>
-            <Input
-              type="text"
-              id="inviteCode"
-              name="inviteCode"
-              placeholder="ENTER YOUR 4-DIGIT CODE"
-              maxLength={4}
-              pattern="[0-9]{4}"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              required
-            />
-          </InputContainer>
-
-          {error && <ErrorMessage>{error}</ErrorMessage>}
-
-          <SubmitButton type="submit" disabled={loading}>
-            {loading ? 'Validating...' : 'Continue to RSVP'}
-          </SubmitButton>
-        </Form>
-      </CodeCard>
+      <InvitationContainer>
+        <BackgroundImage 
+          src="/photo-1596751303147-05d69e653ca4 (1).avif"
+          alt="Wedding Invitation Background"
+          width={1920}
+          height={1440}
+          priority
+        />
+        <FormOverlay>
+          <InvitationCard>
+            <SunflowerDecoration />
+            <InvitationTitle>RSVP</InvitationTitle>
+            <InvitationSubtitle>
+              Please enter your invitation code to respond
+            </InvitationSubtitle>
+            <CodeHint>
+              Your unique code can be found on your invitation
+            </CodeHint>
+            
+            <Form onSubmit={handleSubmit}>
+              <Label htmlFor="code">Invitation Code</Label>
+              <InputContainer>
+                <Input
+                  id="code"
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.toUpperCase())}
+                  placeholder="ENTER YOUR CODE"
+                  pattern="[A-Z0-9]{4}"
+                  maxLength={4}
+                  disabled={isLoading}
+                />
+              </InputContainer>
+              
+              <SubmitButton type="submit" disabled={isLoading}>
+                {isLoading ? 'Checking...' : 'Continue'}
+              </SubmitButton>
+              
+              {error && <ErrorMessage>{error}</ErrorMessage>}
+            </Form>
+          </InvitationCard>
+        </FormOverlay>
+      </InvitationContainer>
     </Layout>
   )
 }

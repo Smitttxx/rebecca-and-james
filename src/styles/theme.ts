@@ -1,7 +1,10 @@
 export const theme = {
   colors: {
     primary: {
-      sage: '#9CAF88', // Main sage green
+      eucalyptus: '#536641', // Main eucalyptus green (darker)
+      eucalyptusLight: '#9CAF88', // Lighter eucalyptus
+      eucalyptusDark: '#5A6B4A', // Darker eucalyptus
+      sage: '#9CAF88', // Keep for compatibility
       sageLight: '#B8C4A6', // Lighter sage
       sageDark: '#7A8B6B', // Darker sage
     },
@@ -13,6 +16,7 @@ export const theme = {
     accent: {
       sunflower: '#F4D03F', // Sunflower yellow
       sunflowerDark: '#D4AC0D', // Darker sunflower
+      sunflowerBright: '#FFD700', // Bright sunflower
     },
     neutral: {
       white: '#FFFFFF',
@@ -21,6 +25,7 @@ export const theme = {
       gray: '#6B6B6B',
       darkGray: '#3A3A3A',
       black: '#1A1A1A',
+      mutedGreen: '#5A6B4A', // Dark muted green from invitation
     },
     status: {
       success: '#4CAF50',
@@ -29,9 +34,11 @@ export const theme = {
     }
   },
   fonts: {
-    heading: '"Playfair Display", serif',
-    body: '"Inter", sans-serif',
-    script: '"Dancing Script", cursive',
+    heading: '"Playfair Display", serif', // Elegant serif for headings
+    body: '"Inter", sans-serif', // Clean sans-serif for body
+    script: '"Dancing Script", cursive', // Script font for names
+    serif: '"Playfair Display", serif', // Serif for formal text
+    display: '"Playfair Display", serif', // Display font for titles
   },
   spacing: {
     xs: '0.25rem',

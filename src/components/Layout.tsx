@@ -3,57 +3,63 @@
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
 import Link from 'next/link'
+import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSun, faCamera, faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { faCamera, faEnvelope, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const Container = styled.div`
   min-height: 100vh;
   background: linear-gradient(135deg, ${theme.colors.neutral.cream} 0%, ${theme.colors.primary.sageLight} 100%);
   position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '🌻';
-    position: absolute;
-    top: 15%;
-    left: 5%;
-    font-size: 4rem;
-    opacity: 0.08;
-    z-index: 1;
-    
-    @media (min-width: ${theme.breakpoints.tablet}) {
-      font-size: 6rem;
-      top: 12%;
-      left: 3%;
-    }
-    
-    @media (min-width: ${theme.breakpoints.desktop}) {
-      font-size: 8rem;
-      top: 10%;
-      left: 2%;
-    }
-  }
+  overflow-x: hidden;
   
   &::after {
-    content: '🌻';
+    content: '';
     position: absolute;
-    bottom: 20%;
-    right: 8%;
-    font-size: 3rem;
-    opacity: 0.06;
+    bottom: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    background-image: url('/leaves.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.15;
     z-index: 1;
     
     @media (min-width: ${theme.breakpoints.tablet}) {
-      font-size: 5rem;
-      bottom: 15%;
-      right: 5%;
+      width: 250px;
+      height: 250px;
     }
     
     @media (min-width: ${theme.breakpoints.desktop}) {
-      font-size: 7rem;
-      bottom: 12%;
-      right: 3%;
+      width: 350px;
+      height: 350px;
     }
+  }
+`
+
+const BlottedPaperDecoration = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background-image: url('/blotted-paper.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.03;
+  z-index: 1;
+  pointer-events: none;
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    width: 300px;
+    height: 300px;
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    width: 400px;
+    height: 400px;
   }
 `
 
@@ -64,7 +70,7 @@ const Header = styled.header`
   padding: ${theme.spacing.sm} ${theme.spacing.md};
   position: relative;
   z-index: 10;
-  background: linear-gradient(135deg, ${theme.colors.primary.sageDark}, ${theme.colors.primary.sage});
+  background: linear-gradient(135deg, ${theme.colors.primary.eucalyptusDark}, ${theme.colors.primary.eucalyptus});
   box-shadow: ${theme.shadows.sm};
   
   @media (min-width: ${theme.breakpoints.tablet}) {
@@ -84,9 +90,24 @@ const Logo = styled(Link)`
   }
 `
 
-const Nav = styled.nav`
+const Nav = styled.nav<{ $isOpen?: boolean }>`
   display: flex;
   gap: ${theme.spacing.md};
+  
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 250px;
+    background: linear-gradient(135deg, ${theme.colors.primary.eucalyptusDark}, ${theme.colors.primary.eucalyptus});
+    flex-direction: column;
+    padding: ${theme.spacing.xl};
+    transform: ${props => props.$isOpen ? 'translateX(0)' : 'translateX(100%)'};
+    transition: transform 0.3s ease;
+    box-shadow: ${theme.shadows.lg};
+    z-index: 1000;
+  }
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     gap: ${theme.spacing.lg};
@@ -117,77 +138,103 @@ const NavLink = styled(Link)`
   }
 `
 
+const BurgerButton = styled.button`
+  display: none;
+  background: none;
+  border: none;
+  color: ${theme.colors.neutral.white};
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 1001;
+  
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    display: block;
+  }
+`
+
+const Overlay = styled.div<{ $isOpen?: boolean }>`
+  display: none;
+  
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    display: ${props => props.$isOpen ? 'block' : 'none'};
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+`
+
 const MainContent = styled.main`
-  padding: ${theme.spacing.md};
+  padding: 0;
   max-width: 100%;
-  margin: 0 auto;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.lg};
-    max-width: 1200px;
-  }
-  
-  @media (min-width: ${theme.breakpoints.desktop}) {
-    padding: ${theme.spacing.xl};
-    max-width: 1400px;
-  }
+  margin: 0;
+  width: 100%;
+  position: relative;
 `
 
-const SunflowerDecoration = styled.div`
+const BackgroundDecoration = styled.div`
   position: absolute;
-  top: 5%;
-  right: 5%;
-  width: 40px;
-  height: 40px;
-  background: ${theme.colors.accent.sunflower};
-  border-radius: ${theme.borderRadius.full};
-  opacity: 0.1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    top: 8%;
-    right: 8%;
-    width: 60px;
-    height: 60px;
-  }
-  
-  svg {
-    font-size: 1.2rem;
-    color: ${theme.colors.accent.sunflowerDark};
-    
-    @media (min-width: ${theme.breakpoints.tablet}) {
-      font-size: 1.8rem;
-    }
-  }
-`
-
-const BackgroundSunflower = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2rem;
-  opacity: 0.04;
+  top: 20%;
+  right: 10%;
+  width: 100px;
+  height: 100px;
+  background-image: url('/plant-stem.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.06;
   z-index: 1;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 3rem;
+    width: 150px;
+    height: 150px;
+    top: 15%;
+    right: 8%;
   }
   
   @media (min-width: ${theme.breakpoints.desktop}) {
-    font-size: 4rem;
+    width: 200px;
+    height: 200px;
+    top: 12%;
+    right: 6%;
+  }
+`
+
+const BottomLeftDecoration = styled.div`
+  position: absolute;
+  bottom: 15%;
+  left: 5%;
+  width: 120px;
+  height: 120px;
+  background-image: url('/pampas.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.05;
+  z-index: 1;
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    width: 180px;
+    height: 180px;
+    bottom: 10%;
+    left: 3%;
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    width: 250px;
+    height: 250px;
+    bottom: 8%;
+    left: 2%;
   }
 `
 
 const Footer = styled.footer`
-  background: linear-gradient(135deg, ${theme.colors.secondary.gold}, ${theme.colors.secondary.goldLight});
   color: ${theme.colors.neutral.white};
   text-align: center;
   padding: ${theme.spacing.xl};
-  margin-top: ${theme.spacing.xl};
   width: 100%;
+  background: ${theme.colors.primary.eucalyptusDark};
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     padding: ${theme.spacing.xxl};
@@ -222,14 +269,79 @@ const SocialIcon = styled.div`
   justify-content: center;
   cursor: pointer;
   transition: transform 0.3s ease;
-  color: ${theme.colors.secondary.gold};
+  color: ${theme.colors.primary.eucalyptusDark};
   font-size: 1.2rem;
   box-shadow: ${theme.shadows.sm};
   
   &:hover {
     transform: scale(1.1);
-    background: ${theme.colors.primary.sageDark};
+    background: ${theme.colors.primary.eucalyptusDark};
     color: ${theme.colors.neutral.white};
+  }
+`
+
+const ContactSection = styled.div`
+  margin-top: ${theme.spacing.lg};
+  padding-top: ${theme.spacing.lg};
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+`
+
+const ContactTitle = styled.p`
+  font-family: ${theme.fonts.body};
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-bottom: ${theme.spacing.md};
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 1rem;
+  }
+`
+
+const ContactDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.sm};
+  align-items: center;
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    flex-direction: row;
+    justify-content: center;
+    gap: ${theme.spacing.xl};
+  }
+`
+
+const ContactPerson = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.xs};
+  align-items: center;
+`
+
+const ContactName = styled.div`
+  font-family: ${theme.fonts.serif};
+  font-size: 1rem;
+  font-weight: 600;
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 1.1rem;
+  }
+`
+
+const ContactPhone = styled.a`
+  font-family: ${theme.fonts.body};
+  font-size: 0.9rem;
+  color: ${theme.colors.neutral.white};
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+  opacity: 0.9;
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 1rem;
+  }
+  
+  &:hover {
+    opacity: 1;
+    text-decoration: underline;
   }
 `
 
@@ -239,23 +351,41 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, activePage }: LayoutProps) {
-  return (
-    <>
-      <Container>
-        <SunflowerDecoration>
-          <FontAwesomeIcon icon={faSun} />
-        </SunflowerDecoration>
-        
-        <BackgroundSunflower>🌻</BackgroundSunflower>
-        
-        <Header>
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen)
+  }
+
+  const closeMenu = () => {
+    setIsMenuOpen(false)
+  }
+
+      return (
+        <>
+          <Container>
+            <BackgroundDecoration />
+            <BottomLeftDecoration />
+            <BlottedPaperDecoration />
+            
+            <Header>
           <Logo href="/">R & J</Logo>
-        <Nav>
-          <NavLink href="/" className={activePage === 'home' ? 'active' : ''}>Home</NavLink>
-          <NavLink href="/rsvp" className={activePage === 'rsvp' ? 'active' : ''}>RSVP</NavLink>
-          <NavLink href="/admin/admin-12345-67890-abcdef" className={activePage === 'admin' ? 'active' : ''}>Admin</NavLink>
-        </Nav>
+          <BurgerButton onClick={toggleMenu}>
+            <FontAwesomeIcon icon={isMenuOpen ? faTimes : faBars} />
+          </BurgerButton>
+          <Nav $isOpen={isMenuOpen}>
+            <NavLink href="/" className={activePage === 'home' ? 'active' : ''} onClick={closeMenu}>Home</NavLink>
+            <NavLink href="/#event-details" onClick={closeMenu}>Event Details</NavLink>
+            <NavLink href="/#order-of-day" onClick={closeMenu}>Order of Day</NavLink>
+            <NavLink href="/#gifts" onClick={closeMenu}>Gifts</NavLink>
+            <NavLink href="/#accommodation" onClick={closeMenu}>Accommodation</NavLink>
+            <NavLink href="/#our-story" onClick={closeMenu}>Our Story</NavLink>
+            <NavLink href="/rsvp" className={activePage === 'rsvp' ? 'active' : ''} onClick={closeMenu}>RSVP</NavLink>
+            <NavLink href="/admin/admin-12345-67890-abcdef" className={activePage === 'admin' ? 'active' : ''} onClick={closeMenu}>Admin</NavLink>
+          </Nav>
         </Header>
+
+        <Overlay $isOpen={isMenuOpen} onClick={closeMenu} />
 
         <MainContent>
           {children}
@@ -264,7 +394,7 @@ export default function Layout({ children, activePage }: LayoutProps) {
 
       <Footer>
         <FooterTitle>Rebecca & James</FooterTitle>
-        <FooterText>June 20th, 2026 • Willow Creek Gardens</FooterText>
+        <FooterText>June 20th, 2026 • Everglades Hotel</FooterText>
         <SocialIcons>
           <SocialIcon>
             <FontAwesomeIcon icon={faCamera} />
@@ -273,6 +403,19 @@ export default function Layout({ children, activePage }: LayoutProps) {
             <FontAwesomeIcon icon={faEnvelope} />
           </SocialIcon>
         </SocialIcons>
+        <ContactSection>
+          <ContactTitle>Please Feel Free To Reach Out To Either Of Us If You Have Any Questions</ContactTitle>
+          <ContactDetails>
+            <ContactPerson>
+              <ContactName>Rebecca</ContactName>
+              <ContactPhone href="tel:07984748539">07984 748539</ContactPhone>
+            </ContactPerson>
+            <ContactPerson>
+              <ContactName>James</ContactName>
+              <ContactPhone href="tel:07496308150">07496 308150</ContactPhone>
+            </ContactPerson>
+          </ContactDetails>
+        </ContactSection>
       </Footer>
     </>
   )

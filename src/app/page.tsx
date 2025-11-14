@@ -27,7 +27,7 @@ const AnimatedSection = styled.section<{ $isVisible: boolean }>`
   margin: 0 auto;
   opacity: ${props => props.$isVisible ? 1 : 0};
   transform: ${props => props.$isVisible ? 'translateY(0)' : 'translateY(30px)'};
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     padding: ${theme.spacing.xxxl} ${theme.spacing.xl};
@@ -203,7 +203,7 @@ const StoryContent = styled.div<{ $isVisible: boolean }>`
   margin: 0 auto;
   opacity: ${props => props.$isVisible ? 1 : 0};
   transform: ${props => props.$isVisible ? 'translateY(0)' : 'translateY(30px)'};
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: 2fr 1fr;
@@ -233,7 +233,7 @@ const AccommodationGrid = styled.div<{ $isVisible: boolean }>`
   border: 1px solid rgba(122, 139, 107, 0.15);
   opacity: ${props => props.$isVisible ? 1 : 0};
   transform: ${props => props.$isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.98)'};
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: 1fr 1fr;
@@ -383,7 +383,7 @@ const GiftsGrid = styled.div<{ $isVisible: boolean }>`
   border: 1px solid rgba(122, 139, 107, 0.15);
   opacity: ${props => props.$isVisible ? 1 : 0};
   transform: ${props => props.$isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.98)'};
-  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: 1fr 1fr;
@@ -509,7 +509,7 @@ const TimelineItem = styled.div<{ $isVisible: boolean; $delay?: number }>`
   padding: ${theme.spacing.lg} 0;
   position: relative;
   opacity: ${props => props.$isVisible ? 1 : 0};
-  transition: opacity 0.6s ease-out;
+  transition: opacity 0.3s ease-out;
   transition-delay: ${props => props.$delay || 0}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -532,8 +532,8 @@ const TimelineTime = styled.div<{ $isVisible: boolean; $delay?: number }>`
   flex-shrink: 0;
   transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(-30px)'};
   opacity: ${props => props.$isVisible ? 1 : 0};
-  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-  transition-delay: ${props => (props.$delay || 0) + 100}ms;
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  transition-delay: ${props => (props.$delay || 0) + 20}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     text-align: right;
@@ -558,7 +558,7 @@ const TimelineIcon = styled.div<{ $isVisible: boolean; $delay?: number }>`
   position: relative;
   z-index: 2;
   transform: ${props => props.$isVisible ? 'scale(1) rotate(0deg)' : 'scale(0) rotate(-180deg)'};
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   transition-delay: ${props => props.$delay || 0}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -586,8 +586,8 @@ const TimelineEvent = styled.div<{ $isVisible: boolean; $delay?: number }>`
   flex: 1;
   transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(20px)'};
   opacity: ${props => props.$isVisible ? 1 : 0};
-  transition: transform 0.5s ease-out, opacity 0.5s ease-out;
-  transition-delay: ${props => (props.$delay || 0) + 200}ms;
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  transition-delay: ${props => (props.$delay || 0) + 40}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     flex: 1;
@@ -610,7 +610,11 @@ function useIntersectionObserver(ref: React.RefObject<HTMLElement | null>, optio
       ([entry]) => {
         setIsVisible(entry.isIntersecting)
       },
-      { threshold: 0.1, ...options }
+      { 
+        threshold: 0,
+        rootMargin: '100px 0px',
+        ...options 
+      }
     )
 
     observer.observe(element)
@@ -708,7 +712,7 @@ export default function Home() {
               return newState
             })
           },
-          { threshold: 0.1, rootMargin: '0px 0px -100px 0px' }
+          { threshold: 0, rootMargin: '200px 0px' }
         )
         
         observer.observe(ref)
@@ -879,7 +883,7 @@ export default function Home() {
           <TimelineLine ref={timelineLineRef} $isVisible={timelineLineVisible} />
           {timelineItems.map((item, index) => {
             const isItemVisible = timelineItemVisible[index] === true
-            const delay = index * 150 // Stagger animation by 150ms per item
+            const delay = index * 10 // Stagger animation by 10ms per item
             
             return (
               <TimelineItem 

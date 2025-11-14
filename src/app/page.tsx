@@ -488,8 +488,8 @@ const TimelineLine = styled.div<{ $isVisible: boolean }>`
   left: 148px;
   top: 60px;
   bottom: 60px;
-  width: 3px;
-  background: linear-gradient(180deg, ${theme.colors.secondary.gold} 0%, ${theme.colors.primary.eucalyptusLight} 50%, ${theme.colors.secondary.gold} 100%);
+  width: 4px;
+  background: ${theme.colors.primary.eucalyptusLight};
   transform-origin: top;
   transform: ${props => props.$isVisible ? 'scaleY(1)' : 'scaleY(0)'};
   transition: transform 1.2s ease-out;
@@ -509,7 +509,7 @@ const TimelineItem = styled.div<{ $isVisible: boolean; $delay?: number }>`
   padding: ${theme.spacing.lg} 0;
   position: relative;
   opacity: ${props => props.$isVisible ? 1 : 0};
-  transition: opacity 0.3s ease-out;
+  transition: opacity 0.6s ease-out;
   transition-delay: ${props => props.$delay || 0}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -523,16 +523,16 @@ const TimelineItem = styled.div<{ $isVisible: boolean; $delay?: number }>`
 `
 
 const TimelineTime = styled.div<{ $isVisible: boolean; $delay?: number }>`
-  font-family: ${theme.fonts.serif};
+  font-family: ${theme.fonts.script};
   font-size: 1.2rem;
   color: ${theme.colors.primary.eucalyptusDark};
-  font-weight: 700;
+  font-weight: 400;
   text-align: right;
   width: 100px;
   flex-shrink: 0;
-  transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(-30px)'};
+  transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(-15px)'};
   opacity: ${props => props.$isVisible ? 1 : 0};
-  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  transition: transform 0.6s ease-out, opacity 0.6s ease-out;
   transition-delay: ${props => (props.$delay || 0) + 20}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -540,7 +540,7 @@ const TimelineTime = styled.div<{ $isVisible: boolean; $delay?: number }>`
     width: 75px;
     font-size: 1rem;
     flex-shrink: 0;
-    transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(-15px)'};
+    transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(-10px)'};
   }
 `
 
@@ -557,8 +557,8 @@ const TimelineIcon = styled.div<{ $isVisible: boolean; $delay?: number }>`
   border: 3px solid ${theme.colors.neutral.white};
   position: relative;
   z-index: 2;
-  transform: ${props => props.$isVisible ? 'scale(1) rotate(0deg)' : 'scale(0) rotate(-180deg)'};
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: ${props => props.$isVisible ? 'scale(1) rotate(0deg)' : 'scale(0.7) rotate(-90deg)'};
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
   transition-delay: ${props => props.$delay || 0}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -573,7 +573,7 @@ const TimelineIcon = styled.div<{ $isVisible: boolean; $delay?: number }>`
 `
 
 const TimelineEvent = styled.div<{ $isVisible: boolean; $delay?: number }>`
-  font-family: ${theme.fonts.script};
+  font-family: "Cormorant Garamond", "Georgia", serif;
   font-size: 1.2rem;
   color: ${theme.colors.neutral.darkGray};
   font-weight: 500;
@@ -584,9 +584,9 @@ const TimelineEvent = styled.div<{ $isVisible: boolean; $delay?: number }>`
   box-shadow: ${theme.shadows.sm};
   border: 1px solid ${theme.colors.primary.eucalyptusLight};
   flex: 1;
-  transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(20px)'};
+  transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(10px)'};
   opacity: ${props => props.$isVisible ? 1 : 0};
-  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+  transition: transform 0.6s ease-out, opacity 0.6s ease-out;
   transition-delay: ${props => (props.$delay || 0) + 40}ms;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -594,7 +594,7 @@ const TimelineEvent = styled.div<{ $isVisible: boolean; $delay?: number }>`
     min-width: 0;
     font-size: 0.95rem;
     padding: ${theme.spacing.sm} ${theme.spacing.md};
-    transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(10px)'};
+    transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(8px)'};
   }
 `
 

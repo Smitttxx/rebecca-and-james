@@ -44,12 +44,34 @@ export async function GET(
     const totalResponses = parties.reduce((sum, party) => 
       sum + party.guests.filter(guest => guest.isAttending !== null).length, 0
     )
+    
+    // Calculate menu option counts
+    const menuCounts = {
+      starters: {} as Record<string, number>,
+      mains: {} as Record<string, number>,
+      desserts: {} as Record<string, number>
+    }
+    
+    parties.forEach(party => {
+      party.guests.forEach(guest => {
+        if (guest.isAttending && guest.starterSelection) {
+          menuCounts.starters[guest.starterSelection] = (menuCounts.starters[guest.starterSelection] || 0) + 1
+        }
+        if (guest.isAttending && guest.mainSelection) {
+          menuCounts.mains[guest.mainSelection] = (menuCounts.mains[guest.mainSelection] || 0) + 1
+        }
+        if (guest.isAttending && guest.dessertSelection) {
+          menuCounts.desserts[guest.dessertSelection] = (menuCounts.desserts[guest.dessertSelection] || 0) + 1
+        }
+      })
+    })
 
     const stats = {
       totalParties,
       totalGuests,
       attendingGuests,
-      totalResponses
+      totalResponses,
+      menuCounts
     }
 
     return NextResponse.json({

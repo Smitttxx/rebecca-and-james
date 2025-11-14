@@ -2,67 +2,67 @@
 
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUtensils, faFish, faLeaf, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faUtensils, faLeaf, faCheck } from '@fortawesome/free-solid-svg-icons'
 import Layout from '@/components/Layout'
 
-const PageHeader = styled.div`
+const PageContainer = styled.div`
+  background: #e3e9dd;
+  padding: 3rem 1.5rem 4rem;
+  min-height: 100vh;
+`
+
+const InviteBanner = styled.div`
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+  background: #fbf7ec;
+  border-radius: 28px;
+  border: 1px solid rgba(153, 140, 104, 0.35);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.05);
+  padding: 1.75rem 2rem 1.9rem;
   text-align: center;
-  margin-bottom: ${theme.spacing.xl};
-  padding: ${theme.spacing.xl} ${theme.spacing.lg};
-  background: linear-gradient(135deg, ${theme.colors.neutral.white}, ${theme.colors.primary.sageLight}10);
-  border-radius: ${theme.borderRadius.lg};
-  border: 1px solid ${theme.colors.primary.sageLight};
-  box-shadow: ${theme.shadows.sm};
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    margin-bottom: ${theme.spacing.xxl};
-    padding: ${theme.spacing.xxl} ${theme.spacing.xl};
-  }
 `
 
-const PageTitle = styled.h1`
-  font-family: ${theme.fonts.script};
-  font-size: 2.2rem;
-  font-weight: 400;
-  color: ${theme.colors.primary.sageDark};
-  margin-bottom: ${theme.spacing.sm};
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 2.8rem;
-  }
+const InviteTitle = styled.h1`
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 1.4rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  margin-bottom: 0.3rem;
 `
 
-const PageSubtitle = styled.p`
+const InviteSubtitle = styled.p`
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: #767765;
   font-family: ${theme.fonts.body};
-  color: ${theme.colors.neutral.gray};
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: ${theme.spacing.lg};
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1.1rem;
-  }
+`
+
+const PartyInfo = styled.div`
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+  display: inline-block;
 `
 
 const PartyName = styled.h2`
-  font-family: ${theme.fonts.script};
-  font-size: 1.6rem;
-  font-weight: 400;
-  color: ${theme.colors.secondary.gold};
-  text-align: center;
-  background: linear-gradient(135deg, ${theme.colors.secondary.goldLight}20, ${theme.colors.secondary.gold}10);
-  padding: ${theme.spacing.sm} ${theme.spacing.lg};
-  border-radius: ${theme.borderRadius.md};
-  border: 1px solid ${theme.colors.secondary.goldLight};
-  display: inline-block;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1.8rem;
-    padding: ${theme.spacing.md} ${theme.spacing.xl};
-  }
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  font-size: 1.1rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.04em;
+`
+
+const GuestCount = styled.p`
+  font-family: ${theme.fonts.body};
+  color: #8a8b7a;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 `
 
 const Form = styled.form`
@@ -71,457 +71,685 @@ const Form = styled.form`
   gap: ${theme.spacing.lg};
 `
 
-const GuestCard = styled.div`
-  background: ${theme.colors.neutral.white};
-  border-radius: ${theme.borderRadius.lg};
-  padding: ${theme.spacing.xl};
-  box-shadow: ${theme.shadows.md};
-  border: 1px solid ${theme.colors.primary.sageLight};
-  position: relative;
-  transition: all 0.3s ease;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.xxl};
-  }
-  
-  &:hover {
-    box-shadow: ${theme.shadows.lg};
-    transform: translateY(-2px);
-  }
-  
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    bottom: -${theme.spacing.lg};
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, ${theme.colors.primary.sageLight}, ${theme.colors.secondary.gold}, ${theme.colors.primary.sageLight}, transparent);
-    border-radius: ${theme.borderRadius.full};
-    box-shadow: 0 1px 3px ${theme.colors.secondary.gold}20;
-  }
-`
-
-const GuestHeader = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing.md};
-  margin-bottom: ${theme.spacing.lg};
-`
-
-const GuestAvatar = styled.div`
-  width: 50px;
-  height: 50px;
-  background: linear-gradient(135deg, ${theme.colors.primary.sageDark}, ${theme.colors.primary.sage});
-  border-radius: ${theme.borderRadius.full};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: ${theme.fonts.script};
-  font-size: 1rem;
-  color: ${theme.colors.neutral.white};
-  font-weight: 600;
-  flex-shrink: 0;
-  box-shadow: ${theme.shadows.md};
-  border: 2px solid ${theme.colors.neutral.white};
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    width: 60px;
-    height: 60px;
-    font-size: 1.2rem;
-  }
-`
-
-const GuestInfo = styled.div`
-  flex: 1;
-`
-
-const GuestName = styled.h3`
-  font-family: ${theme.fonts.heading};
-  font-size: 1.1rem;
-  color: ${theme.colors.primary.sageDark};
-  margin-bottom: ${theme.spacing.xs};
-  font-weight: 500;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1.3rem;
-  }
-`
-
-const RSVPToggle = styled.div`
-  display: flex;
-  gap: ${theme.spacing.sm};
-  margin-bottom: ${theme.spacing.lg};
-  background: ${theme.colors.neutral.cream};
-  padding: ${theme.spacing.xs};
-  border-radius: ${theme.borderRadius.md};
-  border: 1px solid ${theme.colors.primary.sageLight};
-`
-
-const RSVPOption = styled.label<{ $selected?: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: ${theme.spacing.xs};
-  cursor: pointer;
-  padding: ${theme.spacing.sm} ${theme.spacing.md};
-  border-radius: ${theme.borderRadius.sm};
-  transition: all 0.3s ease;
-  flex: 1;
-  justify-content: center;
-  font-weight: 600;
-  font-family: ${theme.fonts.body};
-  font-size: 0.85rem;
-  position: relative;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 0.9rem;
-    padding: ${theme.spacing.sm} ${theme.spacing.lg};
-  }
-  
-  ${props => props.$selected ? `
-    background: linear-gradient(135deg, ${theme.colors.secondary.gold}, ${theme.colors.secondary.goldLight});
-    color: ${theme.colors.neutral.white};
-    box-shadow: ${theme.shadows.sm};
-  ` : `
-    background: ${theme.colors.neutral.white};
-    color: ${theme.colors.neutral.darkGray};
-    
-    &:hover {
-      background: ${theme.colors.secondary.goldLight}20;
-      color: ${theme.colors.secondary.gold};
-    }
-  `}
-  
-  input[type="radio"] {
-    opacity: 0;
-    position: absolute;
-    width: 0;
-    height: 0;
-  }
-`
-
-const MealSection = styled.div`
-  margin-bottom: ${theme.spacing.lg};
-`
-
-const SectionTitle = styled.h4`
-  font-family: ${theme.fonts.heading};
-  font-size: 1rem;
-  color: ${theme.colors.primary.sageDark};
-  margin-bottom: ${theme.spacing.md};
-  font-weight: 500;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1.1rem;
-  }
-`
-
-const MealGrid = styled.div`
+const GuestGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${theme.spacing.sm};
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
-    grid-template-columns: repeat(3, 1fr);
-    gap: ${theme.spacing.md};
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
   }
 `
 
-const MealCard = styled.div<{ $selected?: boolean }>`
-  background: ${theme.colors.neutral.white};
-  border-radius: ${theme.borderRadius.md};
-  padding: ${theme.spacing.md};
-  border: 2px solid ${theme.colors.primary.sageLight};
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.lg};
-  }
-  
-  ${props => props.$selected ? `
-    border-color: ${theme.colors.secondary.gold};
-    background: linear-gradient(135deg, ${theme.colors.secondary.gold}, ${theme.colors.secondary.goldLight});
-    box-shadow: ${theme.shadows.sm};
-    
-    h5 {
-      color: ${theme.colors.neutral.white};
-    }
-    
-    p {
-      color: ${theme.colors.neutral.white};
-      opacity: 0.9;
-    }
-    
-    div {
-      color: ${theme.colors.neutral.white};
-    }
-    
-    &::before {
-      content: '✓';
-      position: absolute;
-      top: ${theme.spacing.xs};
-      right: ${theme.spacing.xs};
-      width: 20px;
-      height: 20px;
-      background: ${theme.colors.secondary.gold};
-      color: ${theme.colors.neutral.white};
-      border-radius: ${theme.borderRadius.full};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 0.8rem;
-      
-      @media (min-width: ${theme.breakpoints.tablet}) {
-        top: ${theme.spacing.sm};
-        right: ${theme.spacing.sm};
-        width: 24px;
-        height: 24px;
-        font-size: 0.9rem;
-      }
-    }
-  ` : `
-    &:hover {
-      border-color: ${theme.colors.primary.sage};
-      box-shadow: ${theme.shadows.sm};
-    }
-  `}
-`
-
-const MealIcon = styled.div`
-  font-size: 1.4rem;
-  color: ${theme.colors.primary.sageDark};
-  margin-bottom: ${theme.spacing.xs};
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1.6rem;
-    margin-bottom: ${theme.spacing.sm};
-  }
-`
-
-const MealDot = styled.div`
-  display: none;
-`
-
-const MealName = styled.h5`
-  font-family: ${theme.fonts.heading};
-  font-size: 0.9rem;
-  color: ${theme.colors.primary.sageDark};
-  margin-bottom: ${theme.spacing.xs};
-  font-weight: 500;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1rem;
-  }
-`
-
-const MealDescription = styled.p`
-  font-family: ${theme.fonts.body};
-  color: ${theme.colors.neutral.gray};
-  font-size: 0.75rem;
-  line-height: 1.3;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 0.8rem;
-  }
-`
-
-const DietarySection = styled.div`
-  margin-top: ${theme.spacing.lg};
-`
-
-const Label = styled.label`
-  font-family: ${theme.fonts.body};
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: ${theme.colors.primary.sageDark};
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: ${theme.spacing.sm};
-  display: block;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 0.9rem;
-  }
-`
-
-const TextArea = styled.textarea`
-  width: 100%;
-  padding: ${theme.spacing.sm};
-  border: 2px solid ${theme.colors.primary.sageLight};
-  border-radius: ${theme.borderRadius.md};
-  font-family: ${theme.fonts.body};
-  font-size: 0.85rem;
-  background: ${theme.colors.neutral.white};
-  color: ${theme.colors.neutral.darkGray};
-  resize: vertical;
-  min-height: 60px;
-  transition: all 0.3s ease;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.md};
-    font-size: 0.9rem;
-    min-height: 80px;
-  }
-  
-  &:focus {
-    outline: none;
-    border-color: ${theme.colors.primary.sageDark};
-    box-shadow: 0 0 0 3px ${theme.colors.primary.sageLight}20;
-  }
-  
-  &:hover {
-    border-color: ${theme.colors.primary.sage};
-  }
-  
-  &::placeholder {
-    color: ${theme.colors.neutral.gray};
-    font-style: italic;
-  }
-`
-
-const SubmitButton = styled.button`
-  background: linear-gradient(135deg, ${theme.colors.primary.sageDark}, ${theme.colors.primary.sage});
-  color: ${theme.colors.neutral.white};
-  border: none;
-  padding: ${theme.spacing.md} ${theme.spacing.lg};
-  border-radius: ${theme.borderRadius.md};
-  font-family: ${theme.fonts.body};
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: ${theme.spacing.lg};
-  width: 100%;
-  box-shadow: ${theme.shadows.sm};
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.lg} ${theme.spacing.xl};
-    font-size: 1rem;
-  }
-  
-  &:hover {
-    background: linear-gradient(135deg, ${theme.colors.primary.sage}, ${theme.colors.primary.sageLight});
-    transform: translateY(-1px);
-    box-shadow: ${theme.shadows.md};
-  }
-  
-  &:disabled {
-    background: ${theme.colors.neutral.gray};
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: ${theme.shadows.sm};
-  }
-`
-
-const SuccessMessage = styled.div`
-  background: linear-gradient(135deg, ${theme.colors.primary.sageDark}, ${theme.colors.primary.sage});
-  color: ${theme.colors.neutral.white};
-  padding: ${theme.spacing.xl};
-  border-radius: ${theme.borderRadius.lg};
-  text-align: center;
-  margin: ${theme.spacing.xl} auto;
-  font-family: ${theme.fonts.body};
-  font-weight: 500;
-  box-shadow: ${theme.shadows.lg};
-  border: 2px solid ${theme.colors.secondary.gold};
-  max-width: 600px;
+const MenuCard = styled.article`
+  background: #fbf7ec;
+  border-radius: 24px;
+  padding: 1.75rem 1.75rem 1.5rem;
+  box-shadow: 0 14px 35px rgba(0,0,0,0.06);
+  border: 1px solid rgba(150, 135, 100, 0.25);
   position: relative;
   
   &::before {
-    content: '';
+    content: "";
     position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg, ${theme.colors.secondary.gold}, ${theme.colors.secondary.goldLight});
-    border-radius: ${theme.borderRadius.lg};
-    z-index: -1;
+    inset: 12px;
+    border-radius: 18px;
+    border: 1px solid rgba(200, 184, 145, 0.5);
+    pointer-events: none;
+  }
+`
+
+const MenuHeader = styled.header`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+`
+
+const MenuInitials = styled.div`
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #c0af7b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: #f3ead2;
+  color: ${theme.colors.primary.eucalyptusDark};
+`
+
+const MenuTitleBlock = styled.div`
+  flex: 1;
+`
+
+const MenuGuestName = styled.h2`
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: ${theme.colors.primary.eucalyptusDark};
+  margin: 0;
+`
+
+const MenuSubtitle = styled.p`
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8a8b7a;
+  margin: 0.25rem 0 0 0;
+`
+
+const MenuAttendance = styled.div`
+  display: inline-flex;
+  background: #f2efe4;
+  border-radius: 999px;
+  padding: 3px;
+  margin-bottom: 1.5rem;
+  font-size: 0.8rem;
+`
+
+const MenuToggle = styled.button<{ $active?: boolean }>`
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0.7;
+  font-family: ${theme.fonts.body};
+  font-size: 1rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  transition: all 0.2s ease;
+  
+  ${props => props.$active ? `
+    background: ${theme.colors.primary.eucalyptusDark};
+    color: #ffffff;
+    opacity: 1;
+    font-weight: 600;
+  ` : ''}
+  
+  &:hover {
+    opacity: ${props => props.$active ? '1' : '0.9'};
+  }
+`
+
+const MenuSection = styled.section<{ $visible?: boolean }>`
+  border-top: 1px solid rgba(189, 177, 138, 0.45);
+  padding-top: 1.1rem;
+  margin-top: 0.9rem;
+  max-height: ${props => props.$visible ? '1000px' : '0'};
+  opacity: ${props => props.$visible ? '1' : '0'};
+  overflow: hidden;
+  transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out;
+  padding-top: ${props => props.$visible ? '1.1rem' : '0'};
+  padding-bottom: ${props => props.$visible ? '0' : '0'};
+  margin-top: ${props => props.$visible ? '0.9rem' : '0'};
+  margin-bottom: ${props => props.$visible ? '0' : '0'};
+`
+
+const MenuSectionTitle = styled.h3`
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 0.8rem;
+  color: #d7b259;
+  font-weight: 600;
+`
+
+const MenuOptions = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`
+
+const MenuOption = styled.div<{ $selected?: boolean }>`
+  padding: 0.65rem 0.75rem;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  
+  &:hover {
+    background: rgba(237, 229, 205, 0.8);
   }
   
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.xxl};
-    margin: ${theme.spacing.xxl} auto;
+  ${props => props.$selected ? `
+    border-color: #d4b25a;
+    background: rgba(235, 217, 170, 0.35);
+  ` : ''}
+`
+
+const MenuOptionContent = styled.div`
+  flex: 1;
+`
+
+const MenuOptionTitle = styled.div`
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+`
+
+// Removed unused styled component: MenuOptionTag
+
+const MenuOptionMark = styled.div`
+  font-size: 0.9rem;
+  margin-top: 0.1rem;
+  color: #d7b259;
+  font-weight: 600;
+`
+
+const ChildBadge = styled.div`
+  display: inline-block;
+  background: #d7b259;
+  color: #2d3325;
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 0.5rem;
+`
+
+const MenuTypeToggle = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(215, 178, 89, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(215, 178, 89, 0.3);
+`
+
+const MenuTypeButton = styled.button<{ $active?: boolean }>`
+  flex: 1;
+  border: 1px solid ${props => props.$active ? '#d7b259' : 'rgba(215, 178, 89, 0.3)'};
+  background: ${props => props.$active ? '#d7b259' : 'transparent'};
+  color: ${props => props.$active ? '#2d3325' : '#6c6c56'};
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  font-weight: ${props => props.$active ? 600 : 400};
+  transition: all 0.2s ease;
+  opacity: ${props => props.$active ? '1' : '0.7'};
+  
+  &:hover {
+    background: ${props => props.$active ? '#d7b259' : 'rgba(215, 178, 89, 0.2)'};
+    opacity: 1;
   }
+`
+
+const ReadOnlyNotice = styled.div`
+  background: rgba(212, 178, 90, 0.15);
+  border: 1px solid rgba(212, 178, 90, 0.4);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  color: #6c6c56;
+  text-align: center;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, margin 0.3s ease-in-out, padding 0.3s ease-in-out;
+  animation: fadeInUp 0.3s ease-out;
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
+
+const UnableToAttendNotice = styled.div`
+  background: rgba(108, 108, 86, 0.1);
+  border: 1px solid rgba(108, 108, 86, 0.3);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  color: #6c6c56;
+  text-align: center;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, margin 0.3s ease-in-out, padding 0.3s ease-in-out;
+  animation: fadeInUp 0.3s ease-out;
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
+
+// Removed unused styled component: MenuOptionReadOnly
+
+const MealSelectionsBox = styled.div`
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(212, 178, 90, 0.1);
+  border-radius: 12px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, margin 0.3s ease-in-out, padding 0.3s ease-in-out;
+  animation: fadeInUp 0.3s ease-out;
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
+
+const MenuNotes = styled.section`
+  border-top: 1px dashed rgba(189, 177, 138, 0.6);
+  margin-top: 1.25rem;
+  padding-top: 0.9rem;
+`
+
+const MenuNotesLabel = styled.label`
+  display: block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 0.35rem;
+  color: #8a8566;
+  font-family: ${theme.fonts.body};
+`
+
+const MenuNotesTextarea = styled.textarea`
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(189, 177, 138, 0.8);
+  min-height: 60px;
+  font-size: 0.8rem;
+  resize: vertical;
+  background: #fdfaf3;
+  font-family: ${theme.fonts.body};
+  color: ${theme.colors.primary.eucalyptusDark};
+  
+  &:focus {
+    outline: none;
+    border-color: #d4b25a;
+  }
+  
+  &::placeholder {
+    color: #9a9474;
+  }
+`
+
+const ValidationMessage = styled.div<{ $isError: boolean }>`
+  font-family: ${theme.fonts.body};
+  font-size: ${props => props.$isError ? '0.85rem' : '0.7rem'};
+  color: ${props => props.$isError ? '#d32f2f' : '#6c6c56'};
+  text-align: ${props => props.$isError ? 'left' : 'center'};
+  margin-top: 0.5rem;
+  margin-bottom: ${props => props.$isError ? '1rem' : '0'};
+  padding: ${props => props.$isError ? '0.75rem 1rem' : '0.35rem 0.5rem'};
+  background: ${props => props.$isError ? 'rgba(211, 47, 47, 0.1)' : 'rgba(108, 108, 86, 0.1)'};
+  border-radius: 8px;
+  border-left: 2px solid ${props => props.$isError ? '#d32f2f' : '#6c6c56'};
+  
+  strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+  
+  ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  
+  li {
+    margin-bottom: 0.25rem;
+    line-height: 1.4;
+  }
+`
+
+const PlaylistCardWrapper = styled.div<{ $visible: boolean }>`
+  max-width: 900px;
+  margin: 0 auto;
+  margin-bottom: ${props => props.$visible ? '2.5rem' : '0'};
+  max-height: ${props => props.$visible ? '1000px' : '0'};
+  opacity: ${props => props.$visible ? '1' : '0'};
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), 
+              opacity 0.4s ease-in-out, 
+              margin-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+`
+
+const PlaylistCard = styled.div`
+  background: #fbf7ec;
+  border-radius: 28px;
+  border: 1px solid rgba(153, 140, 104, 0.35);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.05);
+  padding: 1.75rem 2rem 1.9rem;
+  text-align: center;
+  transform: translateY(0);
+  transition: transform 0.4s ease-out;
+  animation: fadeInUp 0.4s ease-out;
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`
+
+const MusicRequestTitle = styled.h3`
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 1.4rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  margin-bottom: 0.5rem;
+`
+
+const MusicRequestText = styled.textarea`
+  width: 100%;
+  border-radius: 12px;
+  padding: 0.75rem;
+  border: 1px solid rgba(189, 177, 138, 0.8);
+  min-height: 100px;
+  font-size: 0.85rem;
+  resize: vertical;
+  background: #fdfaf3;
+  font-family: ${theme.fonts.body};
+  color: ${theme.colors.primary.eucalyptusDark};
+  margin-top: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #d4b25a;
+  }
+  
+  &::placeholder {
+    color: #9a9474;
+  }
+`
+
+// Removed unused styled components: ContactSection, ContactTitle, ContactDetails, ContactPerson, ContactName, ContactPhone
+
+const ConfirmationSection = styled.div`
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+  background: #fbf7ec;
+  border-radius: 28px;
+  border: 1px solid rgba(153, 140, 104, 0.35);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.05);
+  padding: 1.75rem 2rem 1.9rem;
+  text-align: center;
+`
+
+const ConfirmationTitle = styled.h3`
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 1.2rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  margin-bottom: 0.5rem;
+`
+
+const ConfirmationText = styled.p`
+  font-family: ${theme.fonts.body};
+  color: #767765;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.85rem;
+`
+
+const ConfirmationButtons = styled.div`
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    flex-direction: column;
+    align-items: center;
+  }
+`
+
+const ConfirmButton = styled.button<{ $variant?: 'confirm' | 'decline' }>`
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #d7b259;
+  border-radius: 999px;
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #d7b259;
+  color: #2d3325;
+  
+  &:hover {
+    background: #c0a04d;
+    transform: translateY(-1px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`
+
+const DeadlineText = styled.p`
+  font-family: ${theme.fonts.body};
+  font-size: 0.75rem;
+  color: #8a8b7a;
+  text-align: center;
+  margin-top: 1rem;
+  font-style: italic;
+`
+
+const SuccessMessage = styled.div`
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+  background: #fbf7ec;
+  border-radius: 28px;
+  border: 1px solid rgba(153, 140, 104, 0.35);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.05);
+  padding: 2rem;
+  text-align: center;
+  color: ${theme.colors.primary.eucalyptusDark};
 `
 
 const ErrorMessage = styled.div`
-  background: linear-gradient(135deg, ${theme.colors.status.error}, #EF5350);
-  color: ${theme.colors.neutral.white};
-  padding: ${theme.spacing.lg};
-  border-radius: ${theme.borderRadius.lg};
+  max-width: 900px;
+  margin: 0 auto 2.5rem;
+  background: #fbf7ec;
+  border-radius: 28px;
+  border: 1px solid rgba(211, 47, 47, 0.35);
+  box-shadow: 0 14px 35px rgba(0,0,0,0.05);
+  padding: 1.75rem 2rem 1.9rem;
   text-align: center;
-  margin-bottom: ${theme.spacing.lg};
+  color: #d32f2f;
   font-family: ${theme.fonts.body};
   font-weight: 600;
-  box-shadow: ${theme.shadows.md};
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.xl};
-  }
 `
 
 const LoadingMessage = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
   text-align: center;
-  padding: ${theme.spacing.xl};
+  padding: 2rem;
   font-family: ${theme.fonts.body};
-  color: ${theme.colors.neutral.gray};
+  color: #767765;
   font-size: 0.9rem;
-  
-  @media (min-width: ${theme.breakpoints.tablet}) {
-    font-size: 1rem;
-  }
 `
 
 interface Guest {
   id: string
   firstName: string
   lastName: string
+  isChild?: boolean
+  useKidsMenu?: boolean
   email?: string
   phone?: string
   isAttending?: boolean
   dietaryRequirements?: string
-  menuSelection?: string
+  starterSelection?: string
+  mainSelection?: string
+  dessertSelection?: string
+  submittedAt?: string
 }
 
 interface Party {
   id: string
   partyName: string
-  maxGuests: number
+  musicRequests?: string
   guests: Guest[]
 }
 
-const meals = [
-  {
-    id: 'beef',
-    name: 'Beef Tenderloin',
-    description: 'Perfectly seared with roasted seasonal vegetables',
-    icon: faUtensils,
-    color: '#8B4513'
+const meals = {
+  adult: {
+    starters: [
+      {
+        id: 'soup',
+        name: 'Fresh Seasonal Soup',
+        description: 'With crusty granary bread',
+        tag: '(V)',
+        icon: faLeaf,
+        color: '#4ECDC4'
+      },
+      {
+        id: 'caesar',
+        name: 'Classic Caesar Salad',
+        description: 'With chicken, fresh parmesan and parma ham',
+        tag: '',
+        icon: faUtensils,
+        color: '#8B4513'
+      }
+    ],
+    mains: [
+      {
+        id: 'tart',
+        name: 'Asparagus & Cheddar Tart',
+        description: 'Puff pastry tart with provencal vegetables',
+        tag: '(V)',
+        icon: faLeaf,
+        color: '#4ECDC4'
+      },
+      {
+        id: 'chicken',
+        name: 'Thyme Roasted Chicken',
+        description: 'With truffled creamed potatoes, seasonal veg and red wine jus',
+        tag: '',
+        icon: faUtensils,
+        color: '#8B4513'
+      }
+    ],
+    desserts: [
+      {
+        id: 'cheesecake',
+        name: 'Strawberry Cheesecake',
+        description: 'With berries and strawberry cream',
+        tag: '',
+        icon: faUtensils,
+        color: '#FF6B6B'
+      },
+      {
+        id: 'brownie',
+        name: 'Double Chocolate Brownie',
+        description: 'With salted caramel ice cream and chocolate sauce',
+        tag: '(V)',
+        icon: faUtensils,
+        color: '#8B4513'
+      }
+    ]
   },
-  {
-    id: 'salmon',
-    name: 'Herb-Crusted Salmon',
-    description: 'Fresh Atlantic salmon with lemon butter sauce',
-    icon: faFish,
-    color: '#FF6B6B'
-  },
-  {
-    id: 'vegetarian',
-    name: 'Wild Mushroom Risotto',
-    description: 'Creamy arborio rice with wild mushrooms',
-    icon: faLeaf,
-    color: '#4ECDC4'
+  kids: {
+    starters: [
+      {
+        id: 'kids-soup',
+        name: 'Soup of the Day',
+        description: 'Creamy vegetable soup',
+        tag: '',
+        icon: faUtensils,
+        color: '#4ECDC4'
+      },
+      {
+        id: 'kids-pasta',
+        name: 'Pasta with Tomato Sauce',
+        description: 'Simple and delicious',
+        tag: '(V)',
+        icon: faUtensils,
+        color: '#8B4513'
+      }
+    ],
+    mains: [
+      {
+        id: 'kids-chicken',
+        name: 'Chicken Nuggets',
+        description: 'With chips and peas',
+        tag: '',
+        icon: faUtensils,
+        color: '#8B4513'
+      },
+      {
+        id: 'kids-pasta-main',
+        name: 'Pasta with Meatballs',
+        description: 'Classic kids favourite',
+        tag: '',
+        icon: faUtensils,
+        color: '#8B4513'
+      }
+    ],
+    desserts: [
+      {
+        id: 'kids-ice-cream',
+        name: 'Ice Cream',
+        description: 'Vanilla ice cream with chocolate sauce',
+        tag: '',
+        icon: faUtensils,
+        color: '#FF6B6B'
+      },
+      {
+        id: 'kids-jelly',
+        name: 'Jelly & Ice Cream',
+        description: 'Fruit jelly with vanilla ice cream',
+        tag: '',
+        icon: faUtensils,
+        color: '#FF6B6B'
+      }
+    ]
   }
-]
+}
 
 export default function RSVPFormPage() {
   const [party, setParty] = useState<Party | null>(null)
@@ -532,11 +760,19 @@ export default function RSVPFormPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const partyData = sessionStorage.getItem('partyData')
-    if (partyData) {
-      setParty(JSON.parse(partyData))
-    } else {
-      router.push('/rsvp')
+    if (typeof window !== 'undefined') {
+      const partyData = sessionStorage.getItem('partyData')
+      if (partyData) {
+        const parsedParty = JSON.parse(partyData)
+        // Set default useKidsMenu to true for children
+        parsedParty.guests = parsedParty.guests.map((guest: Guest) => ({
+          ...guest,
+          useKidsMenu: guest.isChild ? (guest.useKidsMenu ?? true) : false
+        }))
+        setParty(parsedParty)
+      } else {
+        router.push('/rsvp')
+      }
     }
     setLoading(false)
   }, [router])
@@ -544,17 +780,169 @@ export default function RSVPFormPage() {
   const handleGuestChange = (guestId: string, field: string, value: string | boolean) => {
     if (!party) return
     
+    // Check if guest has already submitted meal selections
+    const guest = party.guests.find(g => g.id === guestId)
+    const hasSubmittedMeals = guest?.submittedAt && guest.starterSelection && guest.mainSelection && guest.dessertSelection
+    
+    // Prevent meal changes if already submitted (but allow attendance changes)
+    if (hasSubmittedMeals && (field === 'starterSelection' || field === 'mainSelection' || field === 'dessertSelection' || field === 'useKidsMenu')) {
+      return // Don't allow changes to meal selections after submission
+    }
+    
+    // Track if we're changing to "Attending" to scroll to menu
+    const isChangingToAttending = field === 'isAttending' && value === true && guest?.isAttending !== true
+    
     setParty({
       ...party,
-      guests: party.guests.map(guest => 
-        guest.id === guestId ? { ...guest, [field]: value } : guest
-      )
+      guests: party.guests.map(guest => {
+        if (guest.id === guestId) {
+          const updatedGuest = { ...guest, [field]: value }
+          
+          // Only clear meal selections when setting to "not attending" if they haven't already submitted
+          // If they've submitted, keep the meal selections even if they change to "not attending"
+          if (field === 'isAttending' && value === false && !hasSubmittedMeals) {
+            updatedGuest.starterSelection = undefined
+            updatedGuest.mainSelection = undefined
+            updatedGuest.dessertSelection = undefined
+            updatedGuest.dietaryRequirements = undefined
+          }
+          
+          // Clear meal selections when switching menu type (only if not already submitted)
+          if (field === 'useKidsMenu' && !hasSubmittedMeals) {
+            updatedGuest.starterSelection = undefined
+            updatedGuest.mainSelection = undefined
+            updatedGuest.dessertSelection = undefined
+          }
+          return updatedGuest
+        }
+        return guest
+      })
     })
+    
+    // Scroll to menu section when changing to "Attending"
+    if (isChangingToAttending) {
+      setTimeout(() => {
+        const menuCard = document.getElementById(`menu-card-${guestId}`)
+        if (menuCard) {
+          menuCard.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100) // Small delay to ensure DOM has updated
+    }
+    
+    if (error) {
+      setError('')
+    }
+  }
+
+  const getGuestValidationStatus = (guest: Guest) => {
+    if (guest.isAttending === undefined) {
+      return { isValid: false, message: 'Please select attendance' }
+    }
+    
+    // If guest has already submitted meals, only validate attendance
+    const hasSubmittedMeals = guest.submittedAt && guest.starterSelection && guest.mainSelection && guest.dessertSelection
+    if (hasSubmittedMeals) {
+      return { isValid: true, message: '' }
+    }
+    
+    if (guest.isAttending === true) {
+      const missingSelections = []
+      if (!guest.starterSelection) missingSelections.push('starter')
+      if (!guest.mainSelection) missingSelections.push('main course')
+      if (!guest.dessertSelection) missingSelections.push('dessert')
+      
+      if (missingSelections.length > 0) {
+        return { 
+          isValid: false, 
+          message: `Missing: ${missingSelections.join(', ')}` 
+        }
+      }
+    }
+    
+    return { isValid: true, message: '' }
+  }
+
+  const isFormValid = useMemo(() => {
+    if (!party) return false
+
+    const hasUnansweredRSVPs = party.guests.some(guest => guest.isAttending === undefined)
+    if (hasUnansweredRSVPs) {
+      return false
+    }
+
+    // Only validate meal selections for guests who haven't already submitted
+    const attendingGuests = party.guests.filter(guest => guest.isAttending === true)
+    const guestsNeedingMealSelection = attendingGuests.filter(guest => {
+      const hasSubmittedMeals = guest.submittedAt && guest.starterSelection && guest.mainSelection && guest.dessertSelection
+      return !hasSubmittedMeals
+    })
+    
+    const incompleteMealSelections = guestsNeedingMealSelection.some(guest => 
+      !guest.starterSelection || !guest.mainSelection || !guest.dessertSelection
+    )
+    
+    if (incompleteMealSelections) {
+      return false
+    }
+
+    return true
+  }, [party])
+
+  const getValidationDetails = () => {
+    if (!party) return { isValid: false, issues: [] }
+
+    const issues: string[] = []
+
+    // Check for unanswered RSVPs
+    const unansweredGuests = party.guests.filter(guest => guest.isAttending === undefined)
+    if (unansweredGuests.length > 0) {
+      const names = unansweredGuests.map(g => `${g.firstName} ${g.lastName}`).join(', ')
+      issues.push(`${names} ${unansweredGuests.length === 1 ? 'needs' : 'need'} to select "Attending" or "Unable to Attend"`)
+    }
+
+    // Check for incomplete meal selections (only for guests who haven't submitted)
+    const attendingGuests = party.guests.filter(guest => guest.isAttending === true)
+    const guestsNeedingMealSelection = attendingGuests.filter(guest => {
+      const hasSubmittedMeals = guest.submittedAt && guest.starterSelection && guest.mainSelection && guest.dessertSelection
+      return !hasSubmittedMeals
+    })
+
+    guestsNeedingMealSelection.forEach(guest => {
+      const missingItems: string[] = []
+      if (!guest.starterSelection) missingItems.push('starter')
+      if (!guest.mainSelection) missingItems.push('main course')
+      if (!guest.dessertSelection) missingItems.push('dessert')
+      
+      if (missingItems.length > 0) {
+        issues.push(`${guest.firstName} ${guest.lastName} is missing: ${missingItems.join(', ')}`)
+      }
+    })
+
+    return {
+      isValid: issues.length === 0,
+      issues
+    }
+  }
+
+  const validateFormWithError = () => {
+    if (!party) return false
+
+    const validation = getValidationDetails()
+    if (!validation.isValid) {
+      setError(validation.issues.join('. '))
+      return false
+    }
+
+    return true
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!party) return
+
+    if (!validateFormWithError()) {
+      return
+    }
 
     setSubmitting(true)
     setError('')
@@ -567,7 +955,18 @@ export default function RSVPFormPage() {
         },
         body: JSON.stringify({
           partyId: party.id,
-          guests: party.guests
+          guests: party.guests.map(({ id, isAttending, dietaryRequirements, starterSelection, mainSelection, dessertSelection, email, phone, useKidsMenu }) => ({
+            id,
+            isAttending,
+            dietaryRequirements,
+            starterSelection,
+            mainSelection,
+            dessertSelection,
+            email,
+            phone,
+            useKidsMenu
+          })),
+          musicRequests: party.musicRequests,
         }),
       })
 
@@ -578,7 +977,11 @@ export default function RSVPFormPage() {
       }
 
       setSuccess(true)
-      sessionStorage.removeItem('partyData')
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('partyData')
+        // Scroll to top to show the success message
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
@@ -589,7 +992,9 @@ export default function RSVPFormPage() {
   if (loading) {
     return (
       <Layout activePage="rsvp">
-        <LoadingMessage>Loading your RSVP form...</LoadingMessage>
+        <PageContainer>
+          <LoadingMessage>Loading your RSVP form...</LoadingMessage>
+        </PageContainer>
       </Layout>
     )
   }
@@ -597,115 +1002,346 @@ export default function RSVPFormPage() {
   if (!party) {
     return (
       <Layout activePage="rsvp">
-        <ErrorMessage>No party data found. Please start over.</ErrorMessage>
+        <PageContainer>
+          <ErrorMessage>No party data found. Please start over.</ErrorMessage>
+        </PageContainer>
       </Layout>
     )
   }
 
   if (success) {
+    // Check if anyone is attending
+    const hasAttendingGuests = party ? party.guests.some(guest => guest.isAttending === true) : false
+    
     return (
       <Layout activePage="rsvp">
-        <SuccessMessage>
-          <FontAwesomeIcon icon={faCheck} style={{ fontSize: '2rem', marginBottom: '1rem', color: theme.colors.secondary.gold }} />
-          <div style={{ fontSize: '1.2rem', marginBottom: '0.5rem', fontWeight: '600' }}>
-            Thank you!
-          </div>
-          <div style={{ fontSize: '1rem', opacity: 0.9 }}>
-            Your RSVP has been submitted successfully. We can&apos;t wait to celebrate with you!
-          </div>
-        </SuccessMessage>
+        <PageContainer>
+          <SuccessMessage>
+            <FontAwesomeIcon icon={faCheck} style={{ fontSize: '2rem', marginBottom: '1rem', color: '#d7b259' }} />
+            <div style={{ fontSize: '1.2rem', marginBottom: '0.5rem', fontWeight: '600' }}>
+              Thank you!
+            </div>
+            <div style={{ fontSize: '1rem', opacity: 0.9 }}>
+              Your RSVP has been submitted successfully.
+              {hasAttendingGuests ? (
+                <> We can&apos;t wait to celebrate with you!</>
+              ) : (
+                <> We&apos;re sorry you won&apos;t be able to join us, but we appreciate you letting us know.</>
+              )}
+            </div>
+          </SuccessMessage>
+        </PageContainer>
       </Layout>
     )
   }
 
   return (
     <Layout activePage="rsvp">
-      <PageHeader>
-        <PageTitle>RSVP Responses</PageTitle>
-        <PageSubtitle>Please let us know if you&apos;ll be joining us for our special day</PageSubtitle>
-        <PartyName>{party.partyName}</PartyName>
-      </PageHeader>
+      <PageContainer>
+        <InviteBanner>
+          <InviteTitle>You&apos;re Invited!</InviteTitle>
+          <InviteSubtitle>Please Respond by March 15th, 2026</InviteSubtitle>
+          <PartyInfo>
+            <PartyName>{party.partyName}</PartyName>
+            <GuestCount>{party.guests.length} guest{party.guests.length !== 1 ? 's' : ''} invited</GuestCount>
+          </PartyInfo>
+        </InviteBanner>
 
-      {error && <ErrorMessage>{error}</ErrorMessage>}
+        {error && <ErrorMessage>{error}</ErrorMessage>}
 
-      <Form onSubmit={handleSubmit}>
-        {party.guests.map((guest) => (
-          <GuestCard key={guest.id}>
-            <GuestHeader>
-              <GuestAvatar>
-                {guest.firstName[0]}{guest.lastName[0]}
-              </GuestAvatar>
-              <GuestInfo>
-                <GuestName>{guest.firstName} {guest.lastName}</GuestName>
-              </GuestInfo>
-            </GuestHeader>
+        <Form onSubmit={handleSubmit}>
+          <GuestGrid>
+            {party.guests.map((guest, index) => (
+              <MenuCard key={guest.id} id={`menu-card-${guest.id}`}>
+                <MenuHeader>
+                  <MenuInitials>
+                    {guest.firstName[0]}{guest.lastName[0]}
+                  </MenuInitials>
+                  <MenuTitleBlock>
+                    <MenuGuestName>
+                      {guest.firstName} {guest.lastName}
+                      {guest.isChild && <ChildBadge>Child</ChildBadge>}
+                    </MenuGuestName>
+                    <MenuSubtitle>Guest {index + 1} of {party.guests.length}</MenuSubtitle>
+                  </MenuTitleBlock>
+                </MenuHeader>
+                
+                {(() => {
+                  const hasSubmittedMeals = guest.submittedAt && guest.starterSelection && guest.mainSelection && guest.dessertSelection
+                  
+                  // If guest has already submitted meals, show simplified view
+                  if (hasSubmittedMeals) {
+                    // If they're unable to attend, show a different message
+                    if (!guest.isAttending) {
+                      return (
+                        <>
+                          <UnableToAttendNotice>
+                            Sorry you&apos;re missing it, we will miss you! 💕
+                          </UnableToAttendNotice>
+                          
+                          <MenuAttendance>
+                            <MenuToggle
+                              type="button"
+                              $active={false}
+                              onClick={() => handleGuestChange(guest.id, 'isAttending', true)}
+                            >
+                              Attending
+                            </MenuToggle>
+                            <MenuToggle
+                              type="button"
+                              $active={true}
+                              onClick={() => handleGuestChange(guest.id, 'isAttending', false)}
+                            >
+                              Unable to attend
+                            </MenuToggle>
+                          </MenuAttendance>
+                        </>
+                      )
+                    }
+                    
+                    // If they're attending, show meal selections and notice
+                    return (
+                      <>
+                        <ReadOnlyNotice>
+                          ✓ We&apos;ve received your meal selections{guest.submittedAt ? ` on ${new Date(guest.submittedAt).toLocaleDateString('en-GB', { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric' 
+                          })}` : ''}. Your food choices cannot be changed, but you can update your attendance status below.
+                        </ReadOnlyNotice>
+                        
+                        <MenuAttendance>
+                          <MenuToggle
+                            type="button"
+                            $active={true}
+                            onClick={() => handleGuestChange(guest.id, 'isAttending', true)}
+                          >
+                            Attending
+                          </MenuToggle>
+                          <MenuToggle
+                            type="button"
+                            $active={false}
+                            onClick={() => handleGuestChange(guest.id, 'isAttending', false)}
+                          >
+                            Unable to attend
+                          </MenuToggle>
+                        </MenuAttendance>
+                        
+                        {/* Show submitted meal selections in read-only format - only if attending */}
+                        {guest.isAttending && (
+                          <MealSelectionsBox>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: theme.colors.primary.eucalyptusDark, marginBottom: '0.75rem' }}>
+                              Your Selected Meals:
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: '#6c6c56', lineHeight: '1.6' }}>
+                              <div>🍽️ Starter: <strong>{guest.starterSelection}</strong></div>
+                              <div>🍽️ Main: <strong>{guest.mainSelection}</strong></div>
+                              <div>🍽️ Dessert: <strong>{guest.dessertSelection}</strong></div>
+                              {guest.dietaryRequirements && (
+                                <div style={{ marginTop: '0.5rem' }}>🥗 Dietary: {guest.dietaryRequirements}</div>
+                              )}
+                            </div>
+                          </MealSelectionsBox>
+                        )}
+                      </>
+                    )
+                  }
+                  
+                  // If not submitted, show full form
+                  return (
+                    <>
+                      <MenuAttendance>
+                        <MenuToggle
+                          type="button"
+                          $active={guest.isAttending === true}
+                          onClick={() => handleGuestChange(guest.id, 'isAttending', true)}
+                        >
+                          Attending
+                        </MenuToggle>
+                        <MenuToggle
+                          type="button"
+                          $active={guest.isAttending === false}
+                          onClick={() => handleGuestChange(guest.id, 'isAttending', false)}
+                        >
+                          Unable to attend
+                        </MenuToggle>
+                      </MenuAttendance>
+                      
+                      {guest.isChild && guest.isAttending === true && (
+                        <MenuTypeToggle>
+                          <MenuTypeButton
+                            type="button"
+                            $active={guest.useKidsMenu === true}
+                            onClick={() => handleGuestChange(guest.id, 'useKidsMenu', true)}
+                          >
+                            Kids Menu
+                          </MenuTypeButton>
+                          <MenuTypeButton
+                            type="button"
+                            $active={guest.useKidsMenu === false}
+                            onClick={() => handleGuestChange(guest.id, 'useKidsMenu', false)}
+                          >
+                            Adult Menu
+                          </MenuTypeButton>
+                        </MenuTypeToggle>
+                      )}
+                      
+                      {(() => {
+                        const menuType = (guest.isChild && guest.useKidsMenu) ? 'kids' : 'adult'
+                        const menuItems = meals[menuType]
+                        
+                        return (
+                          <>
+                            <MenuSection $visible={guest.isAttending === true}>
+                              <MenuSectionTitle>{guest.firstName}&apos;s Starter</MenuSectionTitle>
+                              <MenuOptions>
+                                {menuItems.starters.map((meal) => {
+                                  const isSelected = guest.starterSelection === meal.id
+                                  return (
+                                    <MenuOption
+                                      key={meal.id}
+                                      $selected={isSelected}
+                                      onClick={() => handleGuestChange(guest.id, 'starterSelection', meal.id)}
+                                      style={{ cursor: 'pointer' }}
+                                    >
+                                      <MenuOptionContent>
+                                        <MenuOptionTitle>{meal.name} {meal.tag}</MenuOptionTitle>
+                                      </MenuOptionContent>
+                                      {isSelected && <MenuOptionMark>✔</MenuOptionMark>}
+                                    </MenuOption>
+                                  )
+                                })}
+                              </MenuOptions>
+                            </MenuSection>
 
-            <RSVPToggle>
-              <RSVPOption $selected={guest.isAttending === true}>
-                <input 
-                  type="radio" 
-                  name={`${guest.id}-attending`} 
-                  value="yes"
-                  checked={guest.isAttending === true}
-                  onChange={() => handleGuestChange(guest.id, 'isAttending', true)}
-                />
-                <FontAwesomeIcon icon={faCheck} />
-                <span>Attending</span>
-              </RSVPOption>
-              <RSVPOption $selected={guest.isAttending === false}>
-                <input 
-                  type="radio" 
-                  name={`${guest.id}-attending`} 
-                  value="no"
-                  checked={guest.isAttending === false}
-                  onChange={() => handleGuestChange(guest.id, 'isAttending', false)}
-                />
-                <FontAwesomeIcon icon={faTimes} />
-                <span>Unable to Attend</span>
-              </RSVPOption>
-            </RSVPToggle>
+                            <MenuSection $visible={guest.isAttending === true}>
+                              <MenuSectionTitle>{guest.firstName}&apos;s Main Course</MenuSectionTitle>
+                              <MenuOptions>
+                                {menuItems.mains.map((meal) => {
+                                  const isSelected = guest.mainSelection === meal.id
+                                  return (
+                                    <MenuOption
+                                      key={meal.id}
+                                      $selected={isSelected}
+                                      onClick={() => handleGuestChange(guest.id, 'mainSelection', meal.id)}
+                                      style={{ cursor: 'pointer' }}
+                                    >
+                                      <MenuOptionContent>
+                                        <MenuOptionTitle>{meal.name} {meal.tag}</MenuOptionTitle>
+                                      </MenuOptionContent>
+                                      {isSelected && <MenuOptionMark>✔</MenuOptionMark>}
+                                    </MenuOption>
+                                  )
+                                })}
+                              </MenuOptions>
+                            </MenuSection>
 
-            {guest.isAttending === true && (
-              <>
-                <MealSection>
-                  <SectionTitle>Menu Selection</SectionTitle>
-                  <MealGrid>
-                    {meals.map((meal) => (
-                      <MealCard
-                        key={meal.id}
-                        $selected={guest.menuSelection === meal.id}
-                        onClick={() => handleGuestChange(guest.id, 'menuSelection', meal.id)}
-                      >
-                        <MealIcon>
-                          <FontAwesomeIcon icon={meal.icon} />
-                        </MealIcon>
-                        <MealDot />
-                        <MealName>{meal.name}</MealName>
-                        <MealDescription>{meal.description}</MealDescription>
-                      </MealCard>
-                    ))}
-                  </MealGrid>
-                </MealSection>
+                            <MenuSection $visible={guest.isAttending === true}>
+                              <MenuSectionTitle>{guest.firstName}&apos;s Dessert</MenuSectionTitle>
+                              <MenuOptions>
+                                {menuItems.desserts.map((meal) => {
+                                  const isSelected = guest.dessertSelection === meal.id
+                                  return (
+                                    <MenuOption
+                                      key={meal.id}
+                                      $selected={isSelected}
+                                      onClick={() => handleGuestChange(guest.id, 'dessertSelection', meal.id)}
+                                      style={{ cursor: 'pointer' }}
+                                    >
+                                      <MenuOptionContent>
+                                        <MenuOptionTitle>{meal.name} {meal.tag}</MenuOptionTitle>
+                                      </MenuOptionContent>
+                                      {isSelected && <MenuOptionMark>✔</MenuOptionMark>}
+                                    </MenuOption>
+                                  )
+                                })}
+                              </MenuOptions>
+                            </MenuSection>
 
-                <DietarySection>
-                  <Label htmlFor={`${guest.id}-dietary`}>Dietary Requirements</Label>
-                  <TextArea
-                    id={`${guest.id}-dietary`}
-                    name={`${guest.id}-dietary`}
-                    placeholder="Please let us know about any allergies, dietary restrictions, or special requirements..."
-                    value={guest.dietaryRequirements || ''}
-                    onChange={(e) => handleGuestChange(guest.id, 'dietaryRequirements', e.target.value)}
-                  />
-                </DietarySection>
-              </>
-            )}
-          </GuestCard>
-        ))}
+                            {guest.isAttending === true && (
+                              <MenuNotes>
+                                <MenuNotesLabel htmlFor={`dietary-${guest.id}`}>
+                                  Dietary Requirements / Allergies
+                                </MenuNotesLabel>
+                                <MenuNotesTextarea
+                                  id={`dietary-${guest.id}`}
+                                  placeholder="Please let us know about any dietary requirements or allergies..."
+                                  value={guest.dietaryRequirements || ''}
+                                  onChange={(e) => handleGuestChange(guest.id, 'dietaryRequirements', e.target.value)}
+                                />
+                              </MenuNotes>
+                            )}
+                          </>
+                        )
+                      })()}
+                    </>
+                  )
+                })()}
 
-        <SubmitButton type="submit" disabled={submitting}>
-          {submitting ? 'Submitting...' : 'Submit RSVP'}
-        </SubmitButton>
-      </Form>
+                {(() => {
+                  // Only show validation for guests who haven't submitted
+                  const hasSubmittedMeals = guest.submittedAt && guest.starterSelection && guest.mainSelection && guest.dessertSelection
+                  if (hasSubmittedMeals) return null
+                  
+                  const validation = getGuestValidationStatus(guest)
+                  return validation.message && (
+                    <ValidationMessage $isError={!validation.isValid}>
+                      {validation.message}
+                    </ValidationMessage>
+                  )
+                })()}
+              </MenuCard>
+            ))}
+          </GuestGrid>
+
+          {/* Only show music requests if at least one guest is attending */}
+          <PlaylistCardWrapper $visible={party ? party.guests.some(guest => guest.isAttending === true) : false}>
+            <PlaylistCard>
+              <MusicRequestTitle>What Gets You Dancing?</MusicRequestTitle>
+              <p style={{ fontSize: '0.85rem', color: '#767765', margin: '0.5rem 0 0 0' }}>
+                Help us create the perfect playlist for our celebration!
+              </p>
+              <MusicRequestText
+                placeholder="Tell us about the songs that make you want to dance! You can include artist names, song titles, or even describe the type of music that gets you moving..."
+                value={party?.musicRequests || ''}
+                onChange={(e) => setParty(prev => prev ? { ...prev, musicRequests: e.target.value } : null)}
+              />
+            </PlaylistCard>
+          </PlaylistCardWrapper>
+
+          <ConfirmationSection>
+            <ConfirmationTitle>Ready to Confirm Your RSVP?</ConfirmationTitle>
+            {(() => {
+              const validation = getValidationDetails()
+              if (!validation.isValid && validation.issues.length > 0) {
+                return (
+                  <ValidationMessage $isError={true}>
+                    <strong>Please complete the following before submitting:</strong>
+                    <ul style={{ marginTop: '0.5rem', marginBottom: 0, paddingLeft: '1.2rem', textAlign: 'left' }}>
+                      {validation.issues.map((issue, index) => (
+                        <li key={index} style={{ marginBottom: '0.25rem' }}>{issue}</li>
+                      ))}
+                    </ul>
+                  </ValidationMessage>
+                )
+              }
+              return (
+                <ConfirmationText>Please ensure all guests have their meal selections and dietary requirements completed above.</ConfirmationText>
+              )
+            })()}
+            <ConfirmationButtons>
+              <ConfirmButton
+                type="submit"
+                $variant="confirm"
+                disabled={submitting || !isFormValid}
+              >
+                {submitting ? 'Submitting...' : 'Submit RSVP Response'}
+              </ConfirmButton>
+            </ConfirmationButtons>
+            <DeadlineText>You can change your response until March 10th, 2026.</DeadlineText>
+          </ConfirmationSection>
+        </Form>
+      </PageContainer>
     </Layout>
   )
 }

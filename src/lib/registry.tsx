@@ -19,11 +19,16 @@ export default function StyledComponentsRegistry({
     return <>{styles}</>
   })
 
-  if (typeof window !== 'undefined') return <>{children}</>
-
-  return (
-    <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
+  // On server, use StyleSheetManager
+  if (typeof window === 'undefined') {
+    return (
+      <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
       {children}
     </StyleSheetManager>
-  )
+    )
+  }
+
+  // On client, just render children
+  // This ensures consistent rendering between server and client
+  return <>{children}</>
 }

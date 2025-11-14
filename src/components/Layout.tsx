@@ -432,14 +432,6 @@ export default function Layout({ children, activePage }: LayoutProps) {
           <Footer>
             <FooterTitle>Rebecca & James</FooterTitle>
             <FooterText>June 20th, 2026 • Everglades Hotel</FooterText>
-            <SocialIcons>
-              <SocialIcon>
-                <FontAwesomeIcon icon={faCamera} />
-              </SocialIcon>
-              <SocialIcon>
-                <FontAwesomeIcon icon={faEnvelope} />
-              </SocialIcon>
-            </SocialIcons>
             <ContactSection>
               <ContactTitle>Please Feel Free To Reach Out To Either Of Us If You Have Any Questions</ContactTitle>
               <ContactDetails>

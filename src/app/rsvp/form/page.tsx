@@ -436,7 +436,8 @@ const ValidationMessage = styled.div<{ $isError: boolean }>`
 `
 
 const PlaylistCardWrapper = styled.div<{ $visible: boolean }>`
-  max-width: 900px;
+  width: 100%;
+  max-width: 1100px;
   margin: 0 auto;
   margin-bottom: ${props => props.$visible ? '2.5rem' : '0'};
   max-height: ${props => props.$visible ? '1000px' : '0'};
@@ -506,7 +507,8 @@ const MusicRequestText = styled.textarea`
 // Removed unused styled components: ContactSection, ContactTitle, ContactDetails, ContactPerson, ContactName, ContactPhone
 
 const ConfirmationSection = styled.div`
-  max-width: 900px;
+  width: 100%;
+  max-width: 1100px;
   margin: 0 auto 2.5rem;
   background: #fbf7ec;
   border-radius: 28px;

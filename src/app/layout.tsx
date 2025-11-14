@@ -17,6 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Rebecca and James",
   description: "A beautiful Next.js app with Styled Components and Prisma",
+  icons: {
+    icon: '/sunflower.png',
+    shortcut: '/sunflower.png',
+    apple: '/sunflower.png',
+  },
 };
 
 export default function RootLayout({

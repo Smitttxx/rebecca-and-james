@@ -37,12 +37,38 @@ const AnimatedSection = styled.section<{ $isVisible: boolean }>`
 const HeroSection = styled.section`
   text-align: center;
   padding: ${theme.spacing.xxl} ${theme.spacing.lg};
-  background: linear-gradient(135deg, ${theme.colors.neutral.white} 0%, ${theme.colors.neutral.cream} 100%);
+  background-image: url('/photo-1704452607741-e3e0e87002f6.avif');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   position: relative;
   animation: ${fadeIn} 1s ease-out;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: visible;
+  width: 100%;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.75);
+    z-index: 0;
+  }
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     padding: ${theme.spacing.xxxl} ${theme.spacing.xl};
+    min-height: 70vh;
+  }
+  
+  @media (min-width: ${theme.breakpoints.desktop}) {
+    min-height: 80vh;
   }
 `
 
@@ -54,6 +80,8 @@ const HeroSubtitle = styled.p`
   letter-spacing: 2px;
   margin-bottom: ${theme.spacing.md};
   font-weight: 500;
+  position: relative;
+  z-index: 1;
 `
 
 const HeroTitle = styled.h1`
@@ -63,6 +91,8 @@ const HeroTitle = styled.h1`
   margin-bottom: ${theme.spacing.md};
   line-height: 1.2;
   color: ${theme.colors.neutral.mutedGreen};
+  position: relative;
+  z-index: 1;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     font-size: 4rem;
@@ -79,6 +109,8 @@ const HeroText = styled.p`
   color: ${theme.colors.neutral.mutedGreen};
   margin-bottom: ${theme.spacing.sm};
   font-weight: 500;
+  position: relative;
+  z-index: 1;
 `
 
 const CountdownLabelSmall = styled.p`
@@ -108,6 +140,8 @@ const CountdownNumberSmall = styled.div`
 
 const RSVPButton = styled(Link)`
   margin-top: ${theme.spacing.xl};
+  position: relative;
+  z-index: 1;
   display: inline-block;
   background: linear-gradient(135deg, ${theme.colors.secondary.gold}, ${theme.colors.secondary.goldLight});
   color: ${theme.colors.neutral.white};
@@ -555,22 +589,12 @@ const TimelineEvent = styled.div<{ $isVisible: boolean; $delay?: number }>`
   transition: transform 0.5s ease-out, opacity 0.5s ease-out;
   transition-delay: ${props => (props.$delay || 0) + 200}ms;
   
-  &:hover {
-    transform: translateX(5px);
-    box-shadow: ${theme.shadows.md};
-    border-color: ${theme.colors.secondary.gold};
-  }
-  
   @media (max-width: ${theme.breakpoints.mobile}) {
     flex: 1;
     min-width: 0;
     font-size: 0.95rem;
     padding: ${theme.spacing.sm} ${theme.spacing.md};
     transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(10px)'};
-    
-    &:hover {
-      transform: translateX(0);
-    }
   }
 `
 

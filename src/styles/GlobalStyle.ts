@@ -9,13 +9,15 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
   }
 
-  html,
-  body {
+  html {
     max-width: 100vw;
     overflow-x: hidden;
   }
 
   body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
     color: rgb(var(--foreground-rgb));
     background: linear-gradient(
         to bottom,

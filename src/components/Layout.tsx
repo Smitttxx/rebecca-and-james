@@ -3,15 +3,15 @@
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCamera, faEnvelope, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 const Container = styled.div`
-  min-height: 100vh;
   background: linear-gradient(135deg, ${theme.colors.neutral.cream} 0%, ${theme.colors.primary.sageLight} 100%);
+  width: 100%;
   position: relative;
-  overflow-x: hidden;
   
   &::after {
     content: '';
@@ -68,13 +68,39 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: ${theme.spacing.sm} ${theme.spacing.md};
-  position: relative;
-  z-index: 10;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
   background: linear-gradient(135deg, ${theme.colors.primary.eucalyptusDark}, ${theme.colors.primary.eucalyptus});
   box-shadow: ${theme.shadows.sm};
+  width: 100%;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  margin: 0;
   
   @media (min-width: ${theme.breakpoints.tablet}) {
     padding: ${theme.spacing.md} ${theme.spacing.lg};
+  }
+`
+
+const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.sm};
+`
+
+const SunflowerIcon = styled.div`
+  width: 32px;
+  height: 32px;
+  position: relative;
+  flex-shrink: 0;
+  
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    width: 40px;
+    height: 40px;
   }
 `
 
@@ -173,6 +199,8 @@ const MainContent = styled.main`
   margin: 0;
   width: 100%;
   position: relative;
+  overflow: visible;
+  height: auto;
 `
 
 const BackgroundDecoration = styled.div`
@@ -363,60 +391,70 @@ export default function Layout({ children, activePage }: LayoutProps) {
 
       return (
         <>
+          <Header>
+            <LogoContainer>
+              <SunflowerIcon>
+                <Image 
+                  src="/sunflower.png" 
+                  alt="Sunflower" 
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              </SunflowerIcon>
+              <Logo href="/">R & J</Logo>
+            </LogoContainer>
+            <BurgerButton onClick={toggleMenu}>
+              <FontAwesomeIcon icon={isMenuOpen ? faTimes : faBars} />
+            </BurgerButton>
+            <Nav $isOpen={isMenuOpen}>
+              <NavLink href="/" className={activePage === 'home' ? 'active' : ''} onClick={closeMenu}>Home</NavLink>
+              <NavLink href="/#event-details" onClick={closeMenu}>Event Details</NavLink>
+              <NavLink href="/#order-of-day" onClick={closeMenu}>Order of Day</NavLink>
+              <NavLink href="/#gifts" onClick={closeMenu}>Gifts</NavLink>
+              <NavLink href="/#accommodation" onClick={closeMenu}>Accommodation</NavLink>
+              <NavLink href="/#our-story" onClick={closeMenu}>Our Story</NavLink>
+              <NavLink href="/rsvp" className={activePage === 'rsvp' ? 'active' : ''} onClick={closeMenu}>RSVP</NavLink>
+              <NavLink href="/admin/admin-12345-67890-abcdef" className={activePage === 'admin' ? 'active' : ''} onClick={closeMenu}>Admin</NavLink>
+            </Nav>
+          </Header>
+
+          <Overlay $isOpen={isMenuOpen} onClick={closeMenu} />
+
           <Container>
             <BackgroundDecoration />
             <BottomLeftDecoration />
             <BlottedPaperDecoration />
             
-            <Header>
-          <Logo href="/">R & J</Logo>
-          <BurgerButton onClick={toggleMenu}>
-            <FontAwesomeIcon icon={isMenuOpen ? faTimes : faBars} />
-          </BurgerButton>
-          <Nav $isOpen={isMenuOpen}>
-            <NavLink href="/" className={activePage === 'home' ? 'active' : ''} onClick={closeMenu}>Home</NavLink>
-            <NavLink href="/#event-details" onClick={closeMenu}>Event Details</NavLink>
-            <NavLink href="/#order-of-day" onClick={closeMenu}>Order of Day</NavLink>
-            <NavLink href="/#gifts" onClick={closeMenu}>Gifts</NavLink>
-            <NavLink href="/#accommodation" onClick={closeMenu}>Accommodation</NavLink>
-            <NavLink href="/#our-story" onClick={closeMenu}>Our Story</NavLink>
-            <NavLink href="/rsvp" className={activePage === 'rsvp' ? 'active' : ''} onClick={closeMenu}>RSVP</NavLink>
-            <NavLink href="/admin/admin-12345-67890-abcdef" className={activePage === 'admin' ? 'active' : ''} onClick={closeMenu}>Admin</NavLink>
-          </Nav>
-        </Header>
+            <MainContent>
+              {children}
+            </MainContent>
+          </Container>
 
-        <Overlay $isOpen={isMenuOpen} onClick={closeMenu} />
-
-        <MainContent>
-          {children}
-        </MainContent>
-      </Container>
-
-      <Footer>
-        <FooterTitle>Rebecca & James</FooterTitle>
-        <FooterText>June 20th, 2026 • Everglades Hotel</FooterText>
-        <SocialIcons>
-          <SocialIcon>
-            <FontAwesomeIcon icon={faCamera} />
-          </SocialIcon>
-          <SocialIcon>
-            <FontAwesomeIcon icon={faEnvelope} />
-          </SocialIcon>
-        </SocialIcons>
-        <ContactSection>
-          <ContactTitle>Please Feel Free To Reach Out To Either Of Us If You Have Any Questions</ContactTitle>
-          <ContactDetails>
-            <ContactPerson>
-              <ContactName>Rebecca</ContactName>
-              <ContactPhone href="tel:07984748539">07984 748539</ContactPhone>
-            </ContactPerson>
-            <ContactPerson>
-              <ContactName>James</ContactName>
-              <ContactPhone href="tel:07496308150">07496 308150</ContactPhone>
-            </ContactPerson>
-          </ContactDetails>
-        </ContactSection>
-      </Footer>
-    </>
-  )
+          <Footer>
+            <FooterTitle>Rebecca & James</FooterTitle>
+            <FooterText>June 20th, 2026 • Everglades Hotel</FooterText>
+            <SocialIcons>
+              <SocialIcon>
+                <FontAwesomeIcon icon={faCamera} />
+              </SocialIcon>
+              <SocialIcon>
+                <FontAwesomeIcon icon={faEnvelope} />
+              </SocialIcon>
+            </SocialIcons>
+            <ContactSection>
+              <ContactTitle>Please Feel Free To Reach Out To Either Of Us If You Have Any Questions</ContactTitle>
+              <ContactDetails>
+                <ContactPerson>
+                  <ContactName>Rebecca</ContactName>
+                  <ContactPhone href="tel:07984748539">07984 748539</ContactPhone>
+                </ContactPerson>
+                <ContactPerson>
+                  <ContactName>James</ContactName>
+                  <ContactPhone href="tel:07496308150">07496 308150</ContactPhone>
+                </ContactPerson>
+              </ContactDetails>
+            </ContactSection>
+          </Footer>
+        </>
+      )
 }

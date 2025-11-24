@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
               email: guest.email,
               phone: guest.phone,
               useKidsMenu: guest.useKidsMenu ?? false,
+              withBeans: guest.withBeans ?? false,
               submittedAt: isFirstSubmission ? new Date() : existingGuest?.submittedAt
             }
           })

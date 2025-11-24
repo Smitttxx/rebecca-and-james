@@ -663,13 +663,12 @@ export default function Home() {
     { time: '1:00 PM', event: 'Arrive', icon: faCalendarAlt },
     { time: '1:30 PM', event: 'Ceremony', icon: faRing },
     { time: '2:15 PM', event: 'Group shot', icon: faCamera },
-    { time: '2:30 PM', event: 'Canapés & drinks', icon: faGlassCheers },
+    { time: '2:30 PM', event: 'Welcome Drinks', icon: faGlassCheers },
     { time: '4:30 PM', event: 'Wedding breakfast', icon: faUtensils },
     { time: '6:00 PM', event: 'Speeches', icon: faMicrophone },
-    { time: '8:15 PM', event: 'Cut the cake', icon: faCake },
-    { time: '8:30 PM', event: 'First dance', icon: faMusic },
-    { time: '9:00 PM', event: 'Dance floor opens', icon: faMusic },
-    { time: '9:30 PM', event: 'Evening buffet', icon: faDrumstickBite },
+    { time: '6:30 PM', event: 'Cut the cake', icon: faCake },
+    { time: '7:00 PM', event: 'First dance', icon: faMusic },
+    { time: '9:00 PM', event: 'Evening Food', icon: faDrumstickBite },
     { time: '12:00 AM', event: 'Carriages', icon: faMoon }
   ]
 

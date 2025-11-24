@@ -15,6 +15,8 @@ const NotFoundContainer = styled.div`
   align-items: center;
   min-height: 60vh;
   padding: ${theme.spacing.xl};
+  margin: 0 auto;
+  max-width: 1200px;
   
   @media (max-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: 1fr;
@@ -134,15 +136,6 @@ export default function NotFound() {
   return (
     <Layout activePage="404">
       <NotFoundContainer>
-        <NotFoundImage>
-          <Image 
-            src="/404.avif" 
-            alt="404 Not Found - Funny Image"
-            width={500}
-            height={400}
-          />
-        </NotFoundImage>
-        
         <NotFoundContent>
           <NotFoundTitle>404</NotFoundTitle>
           <NotFoundSubtitle>Oops! Page Not Found</NotFoundSubtitle>
@@ -162,6 +155,14 @@ export default function NotFound() {
             </BackButton>
           </ButtonGroup>
         </NotFoundContent>
+        <NotFoundImage>
+          <Image 
+            src="/404.avif" 
+            alt="404 Not Found - Funny Image"
+            width={200}
+            height={200}
+          />
+        </NotFoundImage>
       </NotFoundContainer>
     </Layout>
   )

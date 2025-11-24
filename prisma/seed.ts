@@ -23,6 +23,14 @@ async function main() {
         { firstName: 'Theo', lastName: 'Cupit', fullName: 'Theo Cupit', guestTag: 'Ring Bearer', isChild: true }
       ]
     },
+    {
+      code: 'Q8AN',
+      partyName: 'Smith Family',
+      guests: [
+        { firstName: 'Maria', lastName: 'Smith', fullName: 'Maria Smith', guestTag: 'Friends of the Couple', isChild: false },
+        { firstName: 'Douglas', lastName: 'Smith', fullName: 'Douglas Smith', guestTag: 'Friends of the Couple', isChild: false },
+      ]
+    },
     // Row 5-6: MOB1 - Jackie Hearne & Mike Salvarno
     {
       code: 'MOB1',

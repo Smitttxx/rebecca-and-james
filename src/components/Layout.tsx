@@ -413,7 +413,6 @@ export default function Layout({ children, activePage }: LayoutProps) {
               <NavLink href="/#accommodation" onClick={closeMenu}>Accommodation</NavLink>
               <NavLink href="/#our-story" onClick={closeMenu}>Our Story</NavLink>
               <NavLink href="/rsvp" className={activePage === 'rsvp' ? 'active' : ''} onClick={closeMenu}>RSVP</NavLink>
-              <NavLink href="/admin/admin-12345-67890-abcdef" className={activePage === 'admin' ? 'active' : ''} onClick={closeMenu}>Admin</NavLink>
             </Nav>
           </Header>
 

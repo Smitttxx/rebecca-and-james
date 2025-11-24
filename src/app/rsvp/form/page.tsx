@@ -247,6 +247,29 @@ const MenuOptionMark = styled.div`
   font-weight: 600;
 `
 
+const BeansCheckbox = styled.div`
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(215, 178, 89, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(215, 178, 89, 0.3);
+`
+
+const CheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+`
+
+const CheckboxInput = styled.input`
+  width: 16px;
+  height: 16px;
+  accent-color: #d7b259;
+`
+
 const ChildBadge = styled.div`
   display: inline-block;
   background: #d7b259;
@@ -472,6 +495,14 @@ const PlaylistCard = styled.div`
   }
 `
 
+const KidsMenuNotice = styled.p`
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  color: #767765;
+  text-align: center;
+  margin-bottom: 1rem;
+`
+
 const MusicRequestTitle = styled.h3`
   font-family: "Cormorant Garamond", "Georgia", serif;
   letter-spacing: 0.18em;
@@ -629,6 +660,7 @@ interface Guest {
   mainSelection?: string
   dessertSelection?: string
   submittedAt?: string
+  withBeans?: boolean
 }
 
 interface Party {
@@ -698,53 +730,53 @@ const meals = {
   kids: {
     starters: [
       {
-        id: 'kids-soup',
-        name: 'Soup of the Day',
-        description: 'Creamy vegetable soup',
+        id: 'kids-starter',
+        name: 'Garlic Bread',
+        description: 'Garlic bread',
         tag: '',
         icon: faUtensils,
         color: '#4ECDC4'
-      },
-      {
-        id: 'kids-pasta',
-        name: 'Pasta with Tomato Sauce',
-        description: 'Simple and delicious',
-        tag: '(V)',
-        icon: faUtensils,
-        color: '#8B4513'
       }
     ],
     mains: [
       {
-        id: 'kids-chicken',
+        id: 'kids-chicken-main',
         name: 'Chicken Nuggets',
-        description: 'With chips and peas',
+        description: 'With chips and beans (optional)',
         tag: '',
         icon: faUtensils,
         color: '#8B4513'
       },
       {
-        id: 'kids-pasta-main',
-        name: 'Pasta with Meatballs',
-        description: 'Classic kids favourite',
+        id: 'kids-pizza-main',
+        name: 'Cheese Pizza',
+        description: 'With chips and beans (optional)',
         tag: '',
         icon: faUtensils,
         color: '#8B4513'
-      }
+      },
+      {
+        id: 'kids-fish-main',
+        name: 'Fish Fingers',
+        description: 'With chips and beans (optional)',
+        tag: '',
+        icon: faUtensils,
+        color: '#8B4513'
+      },
+      {
+        id: 'kids-sausage-main',
+        name: 'Sausage',
+        description: 'With chips and beans (optional)',
+        tag: '',
+        icon: faUtensils,
+        color: '#8B4513'
+      },
     ],
     desserts: [
       {
         id: 'kids-ice-cream',
         name: 'Ice Cream',
         description: 'Vanilla ice cream with chocolate sauce',
-        tag: '',
-        icon: faUtensils,
-        color: '#FF6B6B'
-      },
-      {
-        id: 'kids-jelly',
-        name: 'Jelly & Ice Cream',
-        description: 'Fruit jelly with vanilla ice cream',
         tag: '',
         icon: faUtensils,
         color: '#FF6B6B'
@@ -957,7 +989,7 @@ export default function RSVPFormPage() {
         },
         body: JSON.stringify({
           partyId: party.id,
-          guests: party.guests.map(({ id, isAttending, dietaryRequirements, starterSelection, mainSelection, dessertSelection, email, phone, useKidsMenu }) => ({
+          guests: party.guests.map(({ id, isAttending, dietaryRequirements, starterSelection, mainSelection, dessertSelection, email, phone, useKidsMenu, withBeans }) => ({
             id,
             isAttending,
             dietaryRequirements,
@@ -966,7 +998,8 @@ export default function RSVPFormPage() {
             dessertSelection,
             email,
             phone,
-            useKidsMenu
+            useKidsMenu,
+            withBeans
           })),
           musicRequests: party.musicRequests,
         }),
@@ -1042,7 +1075,7 @@ export default function RSVPFormPage() {
       <PageContainer>
         <InviteBanner>
           <InviteTitle>You&apos;re Invited!</InviteTitle>
-          <InviteSubtitle>Please Respond by March 15th, 2026</InviteSubtitle>
+          <InviteSubtitle>Please Respond by April 1st, 2026</InviteSubtitle>
           <PartyInfo>
             <PartyName>{party.partyName}</PartyName>
             <GuestCount>{party.guests.length} guest{party.guests.length !== 1 ? 's' : ''} invited</GuestCount>
@@ -1137,7 +1170,7 @@ export default function RSVPFormPage() {
                             </div>
                             <div style={{ fontSize: '0.8rem', color: '#6c6c56', lineHeight: '1.6' }}>
                               <div>🍽️ Starter: <strong>{guest.starterSelection}</strong></div>
-                              <div>🍽️ Main: <strong>{guest.mainSelection}</strong></div>
+                              <div>🍽️ Main: <strong>{guest.mainSelection}</strong>{guest.isChild && guest.withBeans ? ' (with beans)' : guest.isChild && guest.withBeans === false ? ' (without beans)' : ''}</div>
                               <div>🍽️ Dessert: <strong>{guest.dessertSelection}</strong></div>
                               {guest.dietaryRequirements && (
                                 <div style={{ marginTop: '0.5rem' }}>🥗 Dietary: {guest.dietaryRequirements}</div>
@@ -1169,27 +1202,8 @@ export default function RSVPFormPage() {
                         </MenuToggle>
                       </MenuAttendance>
                       
-                      {guest.isChild && guest.isAttending === true && (
-                        <MenuTypeToggle>
-                          <MenuTypeButton
-                            type="button"
-                            $active={guest.useKidsMenu === true}
-                            onClick={() => handleGuestChange(guest.id, 'useKidsMenu', true)}
-                          >
-                            Kids Menu
-                          </MenuTypeButton>
-                          <MenuTypeButton
-                            type="button"
-                            $active={guest.useKidsMenu === false}
-                            onClick={() => handleGuestChange(guest.id, 'useKidsMenu', false)}
-                          >
-                            Adult Menu
-                          </MenuTypeButton>
-                        </MenuTypeToggle>
-                      )}
-                      
                       {(() => {
-                        const menuType = (guest.isChild && guest.useKidsMenu) ? 'kids' : 'adult'
+                        const menuType = guest.isChild ? 'kids' : 'adult'
                         const menuItems = meals[menuType]
                         
                         return (
@@ -1218,6 +1232,9 @@ export default function RSVPFormPage() {
 
                             <MenuSection $visible={guest.isAttending === true}>
                               <MenuSectionTitle>{guest.firstName}&apos;s Main Course</MenuSectionTitle>
+                              <KidsMenuNotice>
+                                {guest.isChild && 'All kids Meals are served with chips and beans (optional)'}
+                              </KidsMenuNotice>
                               <MenuOptions>
                                 {menuItems.mains.map((meal) => {
                                   const isSelected = guest.mainSelection === meal.id
@@ -1236,6 +1253,18 @@ export default function RSVPFormPage() {
                                   )
                                 })}
                               </MenuOptions>
+                              {menuType === 'kids' && guest.mainSelection && (
+                                <BeansCheckbox>
+                                  <CheckboxLabel>
+                                    <CheckboxInput
+                                      type="checkbox"
+                                      checked={guest.withBeans || false}
+                                      onChange={(e) => handleGuestChange(guest.id, 'withBeans', e.target.checked)}
+                                    />
+                                    Include beans with meal
+                                  </CheckboxLabel>
+                                </BeansCheckbox>
+                              )}
                             </MenuSection>
 
                             <MenuSection $visible={guest.isAttending === true}>
@@ -1340,7 +1369,7 @@ export default function RSVPFormPage() {
                 {submitting ? 'Submitting...' : 'Submit RSVP Response'}
               </ConfirmButton>
             </ConfirmationButtons>
-            <DeadlineText>You can change your response until March 10th, 2026.</DeadlineText>
+            <DeadlineText>You can change your response until April 1st, 2026.</DeadlineText>
           </ConfirmationSection>
         </Form>
       </PageContainer>

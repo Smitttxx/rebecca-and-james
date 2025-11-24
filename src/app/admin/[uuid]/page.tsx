@@ -273,6 +273,7 @@ interface Guest {
   guestTag?: string
   isChild?: boolean
   useKidsMenu?: boolean
+  withBeans?: boolean
   isAttending?: boolean
   dietaryRequirements?: string
   allergies?: string
@@ -613,7 +614,7 @@ export default function AdminPage({ params }: { params: Promise<{ uuid: string }
                         <div>🍽️ Starter: <strong>{guest.starterSelection}</strong></div>
                       )}
                       {guest.isAttending && guest.mainSelection && (
-                        <div>🍽️ Main: <strong>{guest.mainSelection}</strong></div>
+                        <div>🍽️ Main: <strong>{guest.mainSelection}</strong>{guest.isChild && guest.withBeans !== undefined ? (guest.withBeans ? ' (with beans)' : ' (without beans)') : ''}</div>
                       )}
                       {guest.isAttending && guest.dessertSelection && (
                         <div>🍽️ Dessert: <strong>{guest.dessertSelection}</strong></div>

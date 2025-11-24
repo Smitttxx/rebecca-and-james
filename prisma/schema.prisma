@@ -32,6 +32,7 @@ model Guest {
   guestTag          String?  // Role: Bride, Groom, Groomsmen, Ring Bearer, Child, Bride Family, Groom Family, Best Man, Bridesmaid, MOH, Friend, etc.
   isChild           Boolean  @default(false)
   useKidsMenu       Boolean  @default(false) // For children: true = kids menu, false = adult menu
+  withBeans         Boolean  @default(false) // For kids menu: include beans with meal
   email             String?
   phone             String?
   isAttending       Boolean?

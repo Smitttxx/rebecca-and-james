@@ -37,8 +37,11 @@ interface UploadResult {
 }
 
 const isVideoItem = (photo: Photo) => {
-  if (photo.contentType) return photo.contentType.startsWith('video/')
-  return /\.(mp4|mov|avi|webm|mkv|m4v)(\?|$)/i.test(photo.url)
+  if (photo.contentType?.startsWith('video/')) return true
+  return (
+    /\.(mp4|mov|avi|webm|mkv|m4v)(\?|$)/i.test(photo.url) ||
+    /\.(mp4|mov|avi|webm|mkv|m4v)$/i.test(photo.filename)
+  )
 }
 
 // ─── Styled Components ───────────────────────────────────────────────────────

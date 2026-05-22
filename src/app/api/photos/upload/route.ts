@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ext = path.extname(uploadName) || '.jpg'
-    const filename = `photos/photo-${Date.now()}-${Math.random().toString(36).substring(7)}${ext}`
+    const filename = `photo-${Date.now()}-${Math.random().toString(36).substring(7)}${ext}`
 
     const blob = await put(filename, buffer, {
       access: 'public',

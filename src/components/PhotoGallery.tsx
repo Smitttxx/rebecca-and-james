@@ -755,6 +755,7 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
                       src={photo.url}
                       alt="Wedding memory"
                       fill
+                      unoptimized
                       style={{ objectFit: 'cover' }}
                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                     />
@@ -847,6 +848,7 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
                   src={selectedPhoto.url}
                   alt="Wedding memory"
                   fill
+                  unoptimized
                   style={{ objectFit: 'contain' }}
                   onLoad={() => setImgLoading(false)}
                 />

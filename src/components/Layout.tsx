@@ -67,7 +67,7 @@ const Header = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: ${theme.spacing.sm} ${theme.spacing.md};
+  padding: ${theme.spacing.md} ${theme.spacing.md};
   position: fixed;
   top: 0;
   left: 0;
@@ -81,9 +81,9 @@ const Header = styled.header`
   margin: 0;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
-  
+
   @media (min-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing.lg} ${theme.spacing.lg};
+    padding: ${theme.spacing.lg} ${theme.spacing.xl};
   }
 `
 
@@ -420,7 +420,7 @@ export default function Layout({ children, activePage }: LayoutProps) {
             <BottomLeftDecoration />
             <BlottedPaperDecoration />
             
-            <MainContent style={{ paddingTop: '50px' }}>
+            <MainContent style={{ paddingTop: '72px' }}>
               {children}
             </MainContent>
           </Container>

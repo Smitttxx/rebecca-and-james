@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { theme } from '@/styles/theme'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -271,6 +271,21 @@ const Spinner = styled.div`
   color: ${theme.colors.neutral.gray};
   gap: 0.5rem;
   font-family: ${theme.fonts.body};
+`
+
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`
+
+const SkeletonCard = styled.div`
+  border-radius: ${theme.borderRadius.lg};
+  height: 180px;
+  background: linear-gradient(90deg, #e4eae4 25%, #d0d9d0 50%, #e4eae4 75%);
+  background-size: 200% 100%;
+  animation: ${shimmer} 1.6s ease-in-out infinite;
+  @media (min-width: ${theme.breakpoints.mobile}) { height: 260px; }
+  @media (min-width: ${theme.breakpoints.tablet}) { height: 320px; }
 `
 
 const Empty = styled.div`
@@ -623,7 +638,7 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
     if (!uploadResult) return null
     const { success, failed, total, errors } = uploadResult
     if (failed === 0) {
-      return { type: 'success' as const, text: `Successfully shared ${success} photo${success !== 1 ? 's' : ''}! Thank you!` }
+      return { type: 'success' as const, text: `Successfully shared ${success} ${success !== 1 ? 'memories' : 'memory'}! Thank you!` }
     } else if (success > 0) {
       const errList = errors.slice(0, 3).join('\n')
       return {
@@ -632,7 +647,7 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
       }
     } else {
       const errList = errors.slice(0, 3).join('\n')
-      return { type: 'error' as const, text: `No photos were shared. All ${total} failed.\n\n${errList}` }
+      return { type: 'error' as const, text: `Nothing was shared. All ${total} failed.\n\n${errList}` }
     }
   }
 
@@ -707,10 +722,11 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
       </Header>
 
       {loading && (
-        <Spinner>
-          <FontAwesomeIcon icon={faSpinner} spin />
-          Loading memories...
-        </Spinner>
+        <Grid>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </Grid>
       )}
 
       {!loading && error && (
@@ -756,6 +772,7 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
                       alt="Wedding memory"
                       fill
                       unoptimized
+                      priority={index < 6}
                       style={{ objectFit: 'cover' }}
                       sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                     />
@@ -784,8 +801,8 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
           )}
 
           {!pagination.hasNextPage && photos.length > 0 && (
-            <Spinner style={{ padding: '1.5rem', color: theme.colors.secondary.gold }}>
-              <FontAwesomeIcon icon={faHeart} />
+            <Spinner style={{ padding: '1.5rem', color: theme.colors.primary.eucalyptusDark }}>
+              <FontAwesomeIcon icon={faHeart} style={{ color: theme.colors.secondary.gold }} />
               All {pagination.totalPhotos} memories loaded
             </Spinner>
           )}

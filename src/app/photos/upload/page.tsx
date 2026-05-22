@@ -137,11 +137,26 @@ async function uploadVideo(file: File, uploadedBy: string): Promise<void> {
   if (file.size > 250 * 1024 * 1024) throw new Error('Video too large (max 250MB)')
   const { upload } = await import('@vercel/blob/client')
   const safeName = `video-${Date.now()}-${Math.random().toString(36).substring(7)}${file.name.slice(file.name.lastIndexOf('.'))}`
-  await upload(safeName, file, {
+  const blob = await upload(safeName, file, {
     access: 'public',
     handleUploadUrl: '/api/photos/video-upload',
     clientPayload: uploadedBy || '',
   })
+  // Save metadata directly — Vercel's onUploadCompleted callback doesn't fire in local dev
+  const res = await fetch('/api/photos/save-media', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      url: blob.url,
+      filename: blob.pathname,
+      contentType: blob.contentType || 'video/mp4',
+      uploadedBy: uploadedBy || null,
+    }),
+  })
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}))
+    throw new Error(data.error || 'Failed to save video metadata')
+  }
 }
 
 async function requestWakeLock(): Promise<WakeLockSentinel | null> {

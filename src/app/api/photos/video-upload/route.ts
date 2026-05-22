@@ -1,6 +1,5 @@
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client'
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
 
 export const maxDuration = 60
 
@@ -17,23 +16,8 @@ export async function POST(request: NextRequest) {
         tokenPayload: clientPayload ?? '',
         cacheControlMaxAge: 31536000,
       }),
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        try {
-          const uploadedBy = tokenPayload || null
-          await prisma.photo.create({
-            data: {
-              filename: blob.pathname,
-              url: blob.url,
-              contentType: blob.contentType || 'video/mp4',
-              uploadedBy,
-              approved: true,
-              deleted: false,
-            },
-          })
-        } catch (err) {
-          console.error('Failed to save video metadata:', err)
-          throw err
-        }
+      onUploadCompleted: async () => {
+        // Metadata is saved by the client via /api/photos/save-media after upload completes
       },
     })
 

@@ -44,7 +44,7 @@ export default function GalleryPage() {
   return (
     <Layout activePage="gallery">
       <PageTitle>Rebecca & James</PageTitle>
-      <PageSub>Every photo tells a story — thank you for sharing yours</PageSub>
+      <PageSub>Every memory tells a story — thank you for sharing yours</PageSub>
       <PhotoGallery isAdmin={false} />
     </Layout>
   )

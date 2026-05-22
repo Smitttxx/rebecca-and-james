@@ -4,6 +4,8 @@ import styled, { keyframes } from 'styled-components'
 import { theme } from '@/styles/theme'
 import Layout from '@/components/Layout'
 import Image from 'next/image'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCalendarAlt, faRing, faCamera, faGlassCheers, faUtensils, faMicrophone, faMusic, faMoon, faCake, faDrumstickBite } from '@fortawesome/free-solid-svg-icons'
 import { useEffect, useRef, useState } from 'react'
 import CountUp from '@/components/CountUp'
 
@@ -180,6 +182,385 @@ const StoryText = styled.div`
   }
 `
 
+const AccommodationGrid = styled.div<{ $isVisible: boolean }>`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: ${theme.borderRadius.lg};
+  overflow: hidden;
+  box-shadow: ${theme.shadows.lg};
+  border: 1px solid rgba(122, 139, 107, 0.15);
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transform: ${props => props.$isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.98)'};
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    grid-template-columns: 1fr 1fr;
+  }
+`
+
+const AccommodationInfo = styled.div`
+  background: ${theme.colors.neutral.white};
+  padding: ${theme.spacing.md};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  @media (min-width: ${theme.breakpoints.mobile}) { padding: ${theme.spacing.xl}; }
+`
+
+const HotelHeader = styled.div`
+  background: ${theme.colors.primary.eucalyptusDark};
+  padding: ${theme.spacing.lg};
+  text-align: center;
+  color: ${theme.colors.neutral.white};
+  margin-bottom: ${theme.spacing.xl};
+`
+
+const HotelName = styled.h3`
+  font-family: ${theme.fonts.serif};
+  font-size: 1.4rem;
+  font-weight: 400;
+  margin-bottom: ${theme.spacing.sm};
+  letter-spacing: 0.5px;
+`
+
+const HotelSubtitle = styled.p`
+  font-family: ${theme.fonts.serif};
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-style: italic;
+  font-weight: 300;
+`
+
+const InfoRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: ${theme.spacing.sm} 0;
+  border-bottom: 1px solid rgba(122, 139, 107, 0.1);
+  margin-bottom: ${theme.spacing.xs};
+
+  &:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
+  @media (min-width: ${theme.breakpoints.mobile}) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: ${theme.spacing.md} 0;
+    margin-bottom: ${theme.spacing.sm};
+    gap: 0;
+  }
+`
+
+const InfoLabel = styled.span`
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  font-weight: 500;
+`
+
+const InfoValue = styled.span`
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  color: ${theme.colors.neutral.darkGray};
+  word-break: break-word;
+  @media (min-width: ${theme.breakpoints.mobile}) { text-align: right; }
+`
+
+const InfoLink = styled.a`
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  color: ${theme.colors.primary.eucalyptus};
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`
+
+const RateBox = styled.div`
+  padding: ${theme.spacing.lg};
+  background: ${theme.colors.neutral.white};
+  border-top: 1px solid rgba(122, 139, 107, 0.1);
+  margin-top: ${theme.spacing.xl};
+`
+
+const RateTitle = styled.h4`
+  font-family: ${theme.fonts.serif};
+  font-size: 1.1rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  margin-bottom: ${theme.spacing.sm};
+  text-align: center;
+  font-weight: 500;
+`
+
+const RateText = styled.p`
+  font-family: ${theme.fonts.body};
+  font-size: 0.85rem;
+  color: ${theme.colors.neutral.gray};
+  text-align: center;
+  margin-bottom: ${theme.spacing.md};
+`
+
+const RateCta = styled.div`
+  background: linear-gradient(135deg, ${theme.colors.secondary.gold}, ${theme.colors.secondary.goldLight});
+  color: ${theme.colors.neutral.white};
+  padding: ${theme.spacing.sm} ${theme.spacing.md};
+  border-radius: ${theme.borderRadius.md};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${theme.spacing.sm};
+  font-family: ${theme.fonts.serif};
+  font-size: 0.85rem;
+  font-weight: 600;
+`
+
+const AccommodationImage = styled.div`
+  background: ${theme.colors.neutral.white};
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    min-height: 600px;
+  }
+`
+
+const GiftsSection = styled(AnimatedSection)`
+  padding: ${theme.spacing.xxl} ${theme.spacing.lg};
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    padding: ${theme.spacing.xxxl} ${theme.spacing.xl};
+  }
+`
+
+const GiftsGrid = styled.div<{ $isVisible: boolean }>`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: ${theme.borderRadius.lg};
+  overflow: hidden;
+  box-shadow: ${theme.shadows.lg};
+  border: 1px solid rgba(122, 139, 107, 0.15);
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transform: ${props => props.$isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.98)'};
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    grid-template-columns: 1fr 1fr;
+  }
+`
+
+const GiftsInfo = styled.div`
+  background: ${theme.colors.neutral.white};
+  padding: ${theme.spacing.xl};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    padding: ${theme.spacing.xxl};
+  }
+`
+
+const GiftsSectionTitle = styled.h2`
+  font-family: ${theme.fonts.heading};
+  font-size: 1.8rem;
+  color: ${theme.colors.primary.sageDark};
+  text-align: left;
+  margin-bottom: ${theme.spacing.lg};
+  font-weight: 600;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 2rem;
+    margin-bottom: ${theme.spacing.xl};
+  }
+`
+
+const GiftsNoteText = styled.p`
+  font-family: ${theme.fonts.body};
+  font-size: 1rem;
+  color: ${theme.colors.neutral.darkGray};
+  line-height: 1.8;
+  margin-bottom: ${theme.spacing.lg};
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 1.1rem;
+    margin-bottom: ${theme.spacing.xl};
+  }
+`
+
+const GiftsNoteSubtext = styled.p`
+  font-family: ${theme.fonts.body};
+  font-size: 1rem;
+  color: ${theme.colors.neutral.darkGray};
+  line-height: 1.8;
+  margin-bottom: ${theme.spacing.lg};
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 1.05rem;
+    margin-bottom: ${theme.spacing.xl};
+  }
+`
+
+const GiftsNoteItalic = styled.p`
+  font-family: ${theme.fonts.serif};
+  font-size: 1.1rem;
+  color: ${theme.colors.secondary.goldDark};
+  font-style: italic;
+  margin-bottom: ${theme.spacing.lg};
+  text-align: center;
+  font-weight: 500;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    font-size: 1.2rem;
+    margin-bottom: ${theme.spacing.xl};
+  }
+`
+
+const GiftsImage = styled.div`
+  background: ${theme.colors.neutral.white};
+  overflow: hidden;
+  position: relative;
+  min-height: 400px;
+
+  @media (min-width: ${theme.breakpoints.tablet}) {
+    min-height: 600px;
+  }
+`
+
+const TimelineContainer = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  padding: ${theme.spacing.lg} 0;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    padding: ${theme.spacing.md} ${theme.spacing.sm};
+  }
+`
+
+const TimelineLine = styled.div<{ $isVisible: boolean }>`
+  position: absolute;
+  left: 148px;
+  top: 60px;
+  bottom: 60px;
+  width: 4px;
+  background: ${theme.colors.primary.eucalyptusLight};
+  transform-origin: top;
+  transform: ${props => props.$isVisible ? 'scaleY(1)' : 'scaleY(0)'};
+  transition: transform 1.2s ease-out;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    left: 117px;
+    top: 40px;
+    bottom: 40px;
+    width: 2px;
+  }
+`
+
+const TimelineItem = styled.div<{ $isVisible: boolean; $delay?: number }>`
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.lg};
+  padding: ${theme.spacing.lg} 0;
+  position: relative;
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transition: opacity 0.6s ease-out;
+  transition-delay: ${props => props.$delay || 0}ms;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: row;
+    align-items: center;
+    gap: ${theme.spacing.md};
+    padding: ${theme.spacing.md} 0;
+  }
+`
+
+const TimelineTime = styled.div<{ $isVisible: boolean; $delay?: number }>`
+  font-family: ${theme.fonts.script};
+  font-size: 1.2rem;
+  color: ${theme.colors.primary.eucalyptusDark};
+  font-weight: 400;
+  text-align: right;
+  width: 100px;
+  flex-shrink: 0;
+  transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(-15px)'};
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+  transition-delay: ${props => (props.$delay || 0) + 20}ms;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    text-align: right;
+    width: 75px;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+`
+
+const TimelineIcon = styled.div<{ $isVisible: boolean; $delay?: number }>`
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, ${theme.colors.secondary.gold}, ${theme.colors.secondary.goldLight});
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: ${theme.shadows.md};
+  border: 3px solid ${theme.colors.neutral.white};
+  position: relative;
+  z-index: 2;
+  transform: ${props => props.$isVisible ? 'scale(1) rotate(0deg)' : 'scale(0.7) rotate(-90deg)'};
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-delay: ${props => props.$delay || 0}ms;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    width: 40px;
+    height: 40px;
+    border-width: 2px;
+
+    svg {
+      font-size: 0.85rem !important;
+    }
+  }
+`
+
+const TimelineEvent = styled.div<{ $isVisible: boolean; $delay?: number }>`
+  font-family: "Cormorant Garamond", "Georgia", serif;
+  font-size: 1.2rem;
+  color: ${theme.colors.neutral.darkGray};
+  font-weight: 500;
+  text-align: left;
+  background: ${theme.colors.neutral.white};
+  padding: ${theme.spacing.md} ${theme.spacing.lg};
+  border-radius: ${theme.borderRadius.md};
+  box-shadow: ${theme.shadows.sm};
+  border: 1px solid ${theme.colors.primary.eucalyptusLight};
+  flex: 1;
+  transform: ${props => props.$isVisible ? 'translateX(0)' : 'translateX(10px)'};
+  opacity: ${props => props.$isVisible ? 1 : 0};
+  transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+  transition-delay: ${props => (props.$delay || 0) + 40}ms;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.95rem;
+    padding: ${theme.spacing.sm} ${theme.spacing.md};
+  }
+`
+
 function useIntersectionObserver(ref: React.RefObject<HTMLElement | null>, options = {}) {
   const [isVisible, setIsVisible] = useState(false)
 
@@ -215,8 +596,63 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [])
 
+  const timelineItems = [
+    { time: '1:00 PM', event: 'Arrive', icon: faCalendarAlt },
+    { time: '1:30 PM', event: 'Ceremony', icon: faRing },
+    { time: '2:15 PM', event: 'Group shot', icon: faCamera },
+    { time: '2:30 PM', event: 'Welcome Drinks', icon: faGlassCheers },
+    { time: '4:30 PM', event: 'Wedding breakfast', icon: faUtensils },
+    { time: '6:00 PM', event: 'Speeches', icon: faMicrophone },
+    { time: '6:30 PM', event: 'Cut the cake', icon: faCake },
+    { time: '7:00 PM', event: 'First dance', icon: faMusic },
+    { time: '9:00 PM', event: 'Evening Food', icon: faDrumstickBite },
+    { time: '12:00 AM', event: 'Carriages', icon: faMoon },
+  ]
+
   const storyRef = useRef<HTMLElement>(null)
+  const accommodationRef = useRef<HTMLElement>(null)
+  const giftsRef = useRef<HTMLElement>(null)
+  const orderOfDayRef = useRef<HTMLElement>(null)
+  const timelineLineRef = useRef<HTMLDivElement>(null)
+  const timelineItemRefs = useRef<(HTMLDivElement | null)[]>([])
+
   const storyVisible = useIntersectionObserver(storyRef)
+  const accommodationVisible = useIntersectionObserver(accommodationRef)
+  const giftsVisible = useIntersectionObserver(giftsRef)
+  const orderOfDayVisible = useIntersectionObserver(orderOfDayRef)
+  const timelineLineVisible = useIntersectionObserver(timelineLineRef)
+
+  const [timelineItemVisible, setTimelineItemVisible] = useState<boolean[]>([])
+
+  useEffect(() => {
+    setTimelineItemVisible(new Array(timelineItems.length).fill(false))
+  }, [timelineItems.length])
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const observers: IntersectionObserver[] = []
+
+      timelineItemRefs.current.forEach((ref, index) => {
+        if (!ref) return
+        const observer = new IntersectionObserver(
+          ([entry]) => {
+            setTimelineItemVisible(prev => {
+              const newState = [...prev]
+              newState[index] = entry.isIntersecting
+              return newState
+            })
+          },
+          { threshold: 0, rootMargin: '200px 0px' }
+        )
+        observer.observe(ref)
+        observers.push(observer)
+      })
+
+      return () => { observers.forEach(o => o.disconnect()) }
+    }, 200)
+
+    return () => { clearTimeout(timeoutId) }
+  }, [timelineItems.length])
 
   useEffect(() => {
     document.documentElement.style.scrollBehavior = 'smooth'
@@ -286,6 +722,108 @@ export default function Home() {
             </CountdownNumberSmall>
           </div>
         </StoryContent>
+      </AnimatedSection>
+
+      <AnimatedSection id="accommodation" ref={accommodationRef} $isVisible={accommodationVisible} style={{ background: theme.colors.neutral.cream, paddingLeft: '0.75rem', paddingRight: '0.75rem' }}>
+        <SectionTitle>Accommodation</SectionTitle>
+        <AccommodationGrid $isVisible={accommodationVisible}>
+          <AccommodationInfo>
+            <HotelHeader>
+              <HotelName>Everglades Hotel</HotelName>
+              <HotelSubtitle>Our Wedding Venue</HotelSubtitle>
+            </HotelHeader>
+            <div style={{ flex: 1 }}>
+              <InfoRow>
+                <InfoLabel>Address</InfoLabel>
+                <InfoValue>Derby Road, Widnes, Cheshire WA8 3UJ</InfoValue>
+              </InfoRow>
+              <InfoRow>
+                <InfoLabel>Contact</InfoLabel>
+                <InfoValue>0151 495 5500</InfoValue>
+              </InfoRow>
+              <InfoRow>
+                <InfoLabel>Website</InfoLabel>
+                <InfoLink href="https://everglades.lavenderhotels.co.uk/" target="_blank" rel="noopener noreferrer">
+                  everglades.lavenderhotels.co.uk
+                </InfoLink>
+              </InfoRow>
+            </div>
+            <RateBox style={{ marginTop: 'auto' }}>
+              <RateTitle>Special Wedding Rates Available</RateTitle>
+              <RateText>Discounted rates for wedding guests - call and quote our wedding.</RateText>
+              <RateCta>
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>Call 0151 495 5500 and quote our wedding</span>
+              </RateCta>
+            </RateBox>
+          </AccommodationInfo>
+          <AccommodationImage>
+            <Image
+              src="/everglades-hotel.jpg"
+              alt="Everglades Hotel exterior"
+              width={500}
+              height={600}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </AccommodationImage>
+        </AccommodationGrid>
+      </AnimatedSection>
+
+      <GiftsSection id="gifts" ref={giftsRef} $isVisible={giftsVisible}>
+        <GiftsGrid $isVisible={giftsVisible}>
+          <GiftsInfo>
+            <GiftsSectionTitle>Gifts</GiftsSectionTitle>
+            <GiftsNoteText>
+              We can&apos;t wait to celebrate with you! We&apos;re lucky to already have everything we need for our family home.
+            </GiftsNoteText>
+            <GiftsNoteSubtext>
+              Truly, the best gift is just having you there. Your love and support is what matters most to us.
+            </GiftsNoteSubtext>
+            <GiftsNoteSubtext>
+              If you were thinking of a gift, we&apos;d love a little help making memories exploring Egypt on our honeymoon.
+            </GiftsNoteSubtext>
+            <GiftsNoteItalic>Whatever feels right for you</GiftsNoteItalic>
+          </GiftsInfo>
+          <GiftsImage>
+            <Image
+              src="/egypt.png"
+              alt="Egypt - Our Honeymoon Destination"
+              width={500}
+              height={600}
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          </GiftsImage>
+        </GiftsGrid>
+      </GiftsSection>
+
+      <AnimatedSection id="order-of-day" ref={orderOfDayRef} $isVisible={orderOfDayVisible}>
+        <SectionTitle>Order of the Day</SectionTitle>
+        <TimelineContainer>
+          <TimelineLine ref={timelineLineRef} $isVisible={timelineLineVisible} />
+          {timelineItems.map((item, index) => {
+            const isItemVisible = timelineItemVisible[index] === true
+            const delay = index * 10
+
+            return (
+              <TimelineItem
+                key={index}
+                ref={(el) => { if (el) timelineItemRefs.current[index] = el }}
+                $isVisible={isItemVisible}
+                $delay={delay}
+              >
+                <TimelineTime $isVisible={isItemVisible} $delay={delay}>
+                  {item.time}
+                </TimelineTime>
+                <TimelineIcon $isVisible={isItemVisible} $delay={delay}>
+                  <FontAwesomeIcon icon={item.icon} style={{ color: theme.colors.neutral.white, fontSize: '1rem' }} />
+                </TimelineIcon>
+                <TimelineEvent $isVisible={isItemVisible} $delay={delay}>
+                  {item.event}
+                </TimelineEvent>
+              </TimelineItem>
+            )
+          })}
+        </TimelineContainer>
       </AnimatedSection>
     </Layout>
   )

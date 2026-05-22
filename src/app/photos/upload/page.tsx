@@ -198,7 +198,7 @@ const Label = styled.label`
 const NameInput = styled.input`
   width: 100%;
   padding: 0.875rem 1rem;
-  border: 2px solid ${theme.colors.secondary.gold};
+  border: 2px solid ${theme.colors.primary.eucalyptus};
   border-radius: ${theme.borderRadius.md};
   font-family: ${theme.fonts.body};
   font-size: 1rem;

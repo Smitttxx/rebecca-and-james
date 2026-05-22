@@ -407,12 +407,9 @@ export default function Layout({ children, activePage }: LayoutProps) {
             </BurgerButton>
             <Nav $isOpen={isMenuOpen}>
               <NavLink href="/" className={activePage === 'home' ? 'active' : ''} onClick={closeMenu}>Home</NavLink>
-              <NavLink href="/#event-details" onClick={closeMenu}>Event Details</NavLink>
-              <NavLink href="/#order-of-day" onClick={closeMenu}>Order of Day</NavLink>
-              <NavLink href="/#gifts" onClick={closeMenu}>Gifts</NavLink>
-              <NavLink href="/#accommodation" onClick={closeMenu}>Accommodation</NavLink>
               <NavLink href="/#our-story" onClick={closeMenu}>Our Story</NavLink>
-              <NavLink href="/rsvp" className={activePage === 'rsvp' ? 'active' : ''} onClick={closeMenu}>RSVP</NavLink>
+              <NavLink href="/photos/upload" className={activePage === 'upload' ? 'active' : ''} onClick={closeMenu}>Upload Photos</NavLink>
+              <NavLink href="/photos/gallery" className={activePage === 'gallery' ? 'active' : ''} onClick={closeMenu}>View Album</NavLink>
             </Nav>
           </Header>
 

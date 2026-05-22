@@ -42,7 +42,7 @@ const PageSub = styled.p`
 
 export default function GalleryPage() {
   return (
-    <Layout>
+    <Layout activePage="gallery">
       <PageTitle>Rebecca & James</PageTitle>
       <PageSub>Every photo tells a story — thank you for sharing yours</PageSub>
       <PhotoGallery isAdmin={false} />

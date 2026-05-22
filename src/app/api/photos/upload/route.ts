@@ -6,6 +6,10 @@ import path from 'path'
 export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json({ error: 'Blob storage token not configured on server' }, { status: 503 })
+  }
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
@@ -85,10 +89,8 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, photo })
   } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Unknown error'
     console.error('Image upload error:', error)
-    return NextResponse.json(
-      { error: 'Upload failed', details: error instanceof Error ? error.message : 'Unknown error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

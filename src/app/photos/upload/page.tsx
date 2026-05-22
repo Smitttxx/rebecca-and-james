@@ -202,10 +202,18 @@ const NameInput = styled.input`
   border-radius: ${theme.borderRadius.md};
   font-family: ${theme.fonts.body};
   font-size: 1rem;
+  color: ${theme.colors.neutral.darkGray};
   background: white;
   box-sizing: border-box;
   margin-bottom: 1rem;
   &:focus { outline: none; border-color: ${theme.colors.primary.eucalyptus}; box-shadow: 0 0 0 3px rgba(83,102,65,0.1); }
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: ${theme.colors.neutral.darkGray};
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    box-shadow: 0 0 0px 1000px white inset;
+  }
 `
 
 const DropZone = styled.div<{ $active: boolean }>`

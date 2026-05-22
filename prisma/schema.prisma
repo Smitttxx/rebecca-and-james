@@ -55,3 +55,16 @@ model Guest {
   @@map("guests")
 }
 
+model Photo {
+  id          String   @id @default(cuid())
+  filename    String
+  url         String
+  contentType String?
+  uploadedBy  String?
+  uploadedAt  DateTime @default(now())
+  approved    Boolean  @default(true)
+  deleted     Boolean  @default(false)
+
+  @@map("photos")
+}
+

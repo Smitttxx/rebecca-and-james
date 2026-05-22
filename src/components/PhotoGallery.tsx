@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCamera, faUser, faSpinner, faUpload, faChevronLeft, faChevronRight,
   faTrash, faTimes, faHeart, faDownload, faVideo, faImages,
+  faSquareCheck, faCheck, faLock,
 } from '@fortawesome/free-solid-svg-icons'
 
 interface Photo {
@@ -184,16 +185,23 @@ const Grid = styled.div`
   @media (min-width: ${theme.breakpoints.tablet}) { grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
 `
 
-const Card = styled.div`
+const Card = styled.div<{ $selected?: boolean }>`
   background: white;
   border-radius: ${theme.borderRadius.lg};
   overflow: hidden;
-  box-shadow: ${theme.shadows.sm};
+  box-shadow: ${p => p.$selected
+    ? '0 0 0 3px #28a745, 0 2px 8px rgba(0,0,0,0.12)'
+    : theme.shadows.sm};
   cursor: pointer;
   position: relative;
   height: 180px;
   transition: transform 0.2s, box-shadow 0.2s;
-  &:hover { transform: translateY(-2px); box-shadow: ${theme.shadows.md}; }
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${p => p.$selected
+      ? '0 0 0 3px #28a745, 0 4px 16px rgba(0,0,0,0.18)'
+      : theme.shadows.md};
+  }
   &:active { transform: scale(0.98); }
   @media (min-width: ${theme.breakpoints.mobile}) { height: 260px; }
   @media (min-width: ${theme.breakpoints.tablet}) { height: 320px; }
@@ -266,6 +274,149 @@ const DeleteBtn = styled.button`
   &:active { transform: scale(0.95); }
 `
 
+const CardCheckbox = styled.div<{ $checked: boolean }>`
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: ${p => p.$checked ? '#28a745' : 'rgba(0,0,0,0.45)'};
+  border: 2.5px solid ${p => p.$checked ? '#28a745' : 'rgba(255,255,255,0.85)'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.15s;
+  color: white;
+  font-size: 0.65rem;
+`
+
+// ─── Admin Toolbar ────────────────────────────────────────────────────────────
+
+const AdminToolbar = styled.div`
+  background: #1a1a2e;
+  border: 2px solid #dc3545;
+  border-radius: ${theme.borderRadius.lg};
+  padding: 0.85rem 1rem;
+  margin-bottom: 1rem;
+`
+
+const AdminToolbarTop = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+`
+
+const AdminLabel = styled.div`
+  font-family: ${theme.fonts.body};
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #ff6b7a;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+`
+
+const AdminHint = styled.p`
+  font-family: ${theme.fonts.body};
+  font-size: 0.75rem;
+  color: #777;
+  margin: 0.3rem 0 0;
+  line-height: 1.4;
+`
+
+const SelectModeBtn = styled.button<{ $active: boolean }>`
+  background: ${p => p.$active ? '#dc3545' : 'transparent'};
+  color: ${p => p.$active ? 'white' : '#dc3545'};
+  border: 2px solid #dc3545;
+  border-radius: ${theme.borderRadius.md};
+  padding: 0.5rem 0.9rem;
+  font-family: ${theme.fonts.body};
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.15s;
+  white-space: nowrap;
+  &:hover { background: #dc3545; color: white; }
+`
+
+const SelectionBar = styled.div`
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(220, 53, 69, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+`
+
+const SelectionCount = styled.span`
+  font-family: ${theme.fonts.body};
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: white;
+  background: #dc3545;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  white-space: nowrap;
+`
+
+const SelectionLink = styled.button`
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #ddd;
+  font-family: ${theme.fonts.body};
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.35rem 0.7rem;
+  border-radius: ${theme.borderRadius.md};
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  &:hover { background: rgba(255,255,255,0.15); color: white; }
+`
+
+const BulkActionGroup = styled.div`
+  display: flex;
+  gap: 0.4rem;
+  margin-left: auto;
+  flex-wrap: wrap;
+`
+
+const BulkBtn = styled.button<{ $variant: 'danger' | 'gold' }>`
+  background: ${p => p.$variant === 'danger' ? '#dc3545' : theme.colors.secondary.gold};
+  color: white;
+  border: none;
+  border-radius: ${theme.borderRadius.md};
+  padding: 0.5rem 0.9rem;
+  font-family: ${theme.fonts.body};
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  transition: all 0.15s;
+  &:hover {
+    background: ${p => p.$variant === 'danger' ? '#b02a37' : theme.colors.secondary.goldDark};
+    transform: translateY(-1px);
+  }
+  &:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+`
+
+// ─── Other ───────────────────────────────────────────────────────────────────
+
 const Spinner = styled.div`
   display: flex;
   justify-content: center;
@@ -302,19 +453,6 @@ const EmptyIcon = styled.div`
   font-size: 3rem;
   color: ${theme.colors.secondary.gold};
   margin-bottom: 0.75rem;
-`
-
-const AdminBanner = styled.div`
-  background: #fff3cd;
-  color: #856404;
-  padding: 0.75rem 1rem;
-  border-radius: ${theme.borderRadius.md};
-  border: 1px solid #ffeaa7;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-family: ${theme.fonts.body};
-  font-weight: 600;
-  font-size: 0.9rem;
 `
 
 const ResultBanner = styled.div<{ $type: 'success' | 'partial' | 'error' }>`
@@ -504,6 +642,12 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
   const [touchEnd, setTouchEnd] = useState<number | null>(null)
   const [uploadResult, setUploadResult] = useState<UploadResult | null>(null)
 
+  // Bulk selection
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkDeleting, setBulkDeleting] = useState(false)
+  const [bulkDownloading, setBulkDownloading] = useState(false)
+
   // Read upload result from sessionStorage on mount
   useEffect(() => {
     const raw = sessionStorage.getItem('uploadResult')
@@ -620,22 +764,79 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
 
   const deletePhoto = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!confirm('Delete this photo? This cannot be undone.')) return
+    if (!confirm('Delete this item? This cannot be undone.')) return
     setDeleting(id)
     try {
       const res = await fetch(`/api/photos/delete?photoId=${id}`, { method: 'DELETE' })
       if (res.ok) {
         setPhotos(prev => prev.filter(p => p.id !== id))
+        setPagination(prev => ({ ...prev, totalPhotos: prev.totalPhotos - 1 }))
         if (selectedPhoto?.id === id) closeModal()
       } else {
-        alert('Failed to delete photo.')
+        alert('Failed to delete.')
       }
     } catch {
-      alert('Failed to delete photo.')
+      alert('Failed to delete.')
     } finally {
       setDeleting(null)
     }
   }
+
+  // ─── Bulk actions ───────────────────────────────────────────────────────────
+
+  const toggleSelectionMode = () => {
+    setSelectionMode(prev => !prev)
+    setSelectedIds(new Set())
+  }
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const selectAll = () => setSelectedIds(new Set(photos.map(p => p.id)))
+  const selectNone = () => setSelectedIds(new Set())
+
+  const bulkDelete = async () => {
+    const count = selectedIds.size
+    if (count === 0) return
+    if (!confirm(`Permanently delete ${count} item${count !== 1 ? 's' : ''}?\n\nThis cannot be undone.`)) return
+    setBulkDeleting(true)
+    try {
+      const ids = Array.from(selectedIds)
+      const results = await Promise.all(
+        ids.map(id => fetch(`/api/photos/delete?photoId=${id}`, { method: 'DELETE' }))
+      )
+      const failed = results.filter(r => !r.ok).length
+      const deleted = ids.length - failed
+      setPhotos(prev => prev.filter(p => !selectedIds.has(p.id)))
+      setPagination(prev => ({ ...prev, totalPhotos: prev.totalPhotos - deleted }))
+      setSelectedIds(new Set())
+      setSelectionMode(false)
+      if (failed > 0) alert(`${failed} item${failed !== 1 ? 's' : ''} could not be deleted.`)
+    } catch {
+      alert('Some deletions failed. Please refresh and try again.')
+    } finally {
+      setBulkDeleting(false)
+    }
+  }
+
+  const bulkDownload = async () => {
+    const toDownload = photos.filter(p => selectedIds.has(p.id))
+    if (toDownload.length === 0) return
+    setBulkDownloading(true)
+    for (const photo of toDownload) {
+      await downloadPhoto(photo)
+      await new Promise(r => setTimeout(r, 400))
+    }
+    setBulkDownloading(false)
+  }
+
+  // ───────────────────────────────────────────────────────────────────────────
 
   const resultMessage = () => {
     if (!uploadResult) return null
@@ -655,10 +856,66 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
   }
 
   const result = resultMessage()
+  const selectedCount = selectedIds.size
 
   return (
     <Wrap>
-      {isAdmin && <AdminBanner>Admin mode — delete buttons are visible</AdminBanner>}
+      {/* ── Admin Toolbar ── */}
+      {isAdmin && (
+        <AdminToolbar>
+          <AdminToolbarTop>
+            <div>
+              <AdminLabel>
+                <FontAwesomeIcon icon={faLock} style={{ fontSize: '0.7rem' }} />
+                Admin Mode
+              </AdminLabel>
+              <AdminHint>
+                {selectionMode
+                  ? 'Click items to select them, then use the actions below.'
+                  : 'Each item has a red delete button. Enable bulk select to manage multiple items at once.'}
+              </AdminHint>
+            </div>
+            <SelectModeBtn $active={selectionMode} onClick={toggleSelectionMode}>
+              <FontAwesomeIcon icon={faSquareCheck} />
+              {selectionMode ? 'Cancel Selection' : 'Bulk Select'}
+            </SelectModeBtn>
+          </AdminToolbarTop>
+
+          {selectionMode && (
+            <SelectionBar>
+              <SelectionCount>
+                {selectedCount} selected
+              </SelectionCount>
+              <SelectionLink onClick={selectAll}>
+                <FontAwesomeIcon icon={faSquareCheck} />
+                Select all ({photos.length})
+              </SelectionLink>
+              <SelectionLink onClick={selectNone}>
+                <FontAwesomeIcon icon={faTimes} style={{ fontSize: '0.7rem' }} />
+                Select none
+              </SelectionLink>
+              <BulkActionGroup>
+                <BulkBtn
+                  $variant="gold"
+                  onClick={bulkDownload}
+                  disabled={selectedCount === 0 || bulkDownloading || bulkDeleting}
+                >
+                  <FontAwesomeIcon icon={bulkDownloading ? faSpinner : faDownload} spin={bulkDownloading} />
+                  {bulkDownloading ? 'Downloading…' : `Download (${selectedCount})`}
+                </BulkBtn>
+                <BulkBtn
+                  $variant="danger"
+                  onClick={bulkDelete}
+                  disabled={selectedCount === 0 || bulkDeleting || bulkDownloading}
+                >
+                  <FontAwesomeIcon icon={bulkDeleting ? faSpinner : faTrash} spin={bulkDeleting} />
+                  {bulkDeleting ? 'Deleting…' : `Delete (${selectedCount})`}
+                </BulkBtn>
+              </BulkActionGroup>
+            </SelectionBar>
+          )}
+        </AdminToolbar>
+      )}
 
       {result && (
         <ResultBanner $type={result.type}>
@@ -752,7 +1009,16 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
             {photos.map((photo, index) => (
               <Card
                 key={photo.id}
-                onClick={() => { setSelectedPhoto(photo); setSelectedIndex(index); setImgLoading(true) }}
+                $selected={selectionMode && selectedIds.has(photo.id)}
+                onClick={() => {
+                  if (selectionMode) {
+                    toggleSelect(photo.id)
+                  } else {
+                    setSelectedPhoto(photo)
+                    setSelectedIndex(index)
+                    setImgLoading(true)
+                  }
+                }}
               >
                 <CardMedia>
                   {isVideoItem(photo) ? (
@@ -786,10 +1052,15 @@ export default function PhotoGallery({ isAdmin = false }: { isAdmin?: boolean })
                       {photo.uploadedBy}
                     </UploaderTag>
                   )}
-                  {isAdmin && (
+                  {isAdmin && !selectionMode && (
                     <DeleteBtn onClick={e => deletePhoto(photo.id, e)} disabled={deleting === photo.id}>
                       <FontAwesomeIcon icon={deleting === photo.id ? faSpinner : faTrash} spin={deleting === photo.id} />
                     </DeleteBtn>
+                  )}
+                  {isAdmin && selectionMode && (
+                    <CardCheckbox $checked={selectedIds.has(photo.id)}>
+                      {selectedIds.has(photo.id) && <FontAwesomeIcon icon={faCheck} />}
+                    </CardCheckbox>
                   )}
                 </CardMedia>
               </Card>

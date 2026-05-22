@@ -510,6 +510,7 @@ export default function PhotoUploadPage() {
   const wakeLockRef = useRef<WakeLockSentinel | null>(null)
   const startTimeRef = useRef<number>(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const doneRef = useRef(false)
 
   // Restore name from localStorage
   useEffect(() => {
@@ -526,7 +527,7 @@ export default function PhotoUploadPage() {
   // Warn before closing during upload
   useEffect(() => {
     const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (phase === 'uploading') { e.preventDefault(); e.returnValue = '' }
+      if (phase === 'uploading' && !doneRef.current) { e.preventDefault(); e.returnValue = '' }
     }
     window.addEventListener('beforeunload', onBeforeUnload)
     return () => window.removeEventListener('beforeunload', onBeforeUnload)
@@ -664,6 +665,7 @@ export default function PhotoUploadPage() {
       errors,
     }
     sessionStorage.setItem('uploadResult', JSON.stringify(result))
+    doneRef.current = true
     router.push('/photos/gallery')
   }
 

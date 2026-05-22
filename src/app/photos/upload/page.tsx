@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useDropzone, type FileRejection } from 'react-dropzone'
 import styled from 'styled-components'
 import { theme } from '@/styles/theme'
+import Layout from '@/components/Layout'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCloudUploadAlt, faSpinner, faCheckCircle, faExclamationTriangle,
@@ -152,12 +153,9 @@ async function requestWakeLock(): Promise<WakeLockSentinel | null> {
 
 // ─── Styled Components ───────────────────────────────────────────────────────
 
-const PageWrap = styled.div`
-  min-height: 100vh;
-  background: linear-gradient(135deg, ${theme.colors.neutral.cream} 0%, ${theme.colors.primary.sageLight} 100%);
-  padding: 1rem;
-  padding-top: 70px;
-  @media (min-width: ${theme.breakpoints.mobile}) { padding: 1.5rem; padding-top: 80px; }
+const PageContent = styled.div`
+  padding: 1.25rem 1rem 2rem;
+  @media (min-width: ${theme.breakpoints.mobile}) { padding: 2rem 1.5rem; }
 `
 
 const Card = styled.div`
@@ -661,34 +659,33 @@ export default function PhotoUploadPage() {
     router.push('/photos/gallery')
   }
 
-  if (phase === 'uploading') {
-    const pct = progress.total > 0 ? Math.round((progress.current / progress.total) * 100) : 0
-    return (
-      <Overlay>
-        <OverlayCard>
-          <OverlayIcon>
-            <FontAwesomeIcon icon={faSpinner} spin />
-          </OverlayIcon>
-          <OverlayTitle>Sharing your memories…</OverlayTitle>
-          <OverlayWarn>
-            Keep this screen open and your phone unlocked — switching apps will pause the upload
-          </OverlayWarn>
-          <ProgressBar>
-            <ProgressFill $pct={pct} />
-          </ProgressBar>
-          <ProgressText>
-            {progress.current} of {progress.total} uploaded
-          </ProgressText>
-          {estimatedSeconds !== null && estimatedSeconds > 5 && (
-            <ProgressSub>{formatTime(estimatedSeconds)} remaining</ProgressSub>
-          )}
-        </OverlayCard>
-      </Overlay>
-    )
-  }
+  const pct = progress.total > 0 ? Math.round((progress.current / progress.total) * 100) : 0
 
   return (
-    <PageWrap>
+    <Layout activePage="upload">
+      {phase === 'uploading' && (
+        <Overlay>
+          <OverlayCard>
+            <OverlayIcon>
+              <FontAwesomeIcon icon={faSpinner} spin />
+            </OverlayIcon>
+            <OverlayTitle>Sharing your memories…</OverlayTitle>
+            <OverlayWarn>
+              Keep this screen open and your phone unlocked — switching apps will pause the upload
+            </OverlayWarn>
+            <ProgressBar>
+              <ProgressFill $pct={pct} />
+            </ProgressBar>
+            <ProgressText>
+              {progress.current} of {progress.total} uploaded
+            </ProgressText>
+            {estimatedSeconds !== null && estimatedSeconds > 5 && (
+              <ProgressSub>{formatTime(estimatedSeconds)} remaining</ProgressSub>
+            )}
+          </OverlayCard>
+        </Overlay>
+      )}
+      <PageContent>
       <Card>
         <PageTitle>Share Your Photos</PageTitle>
         <SubTitle>Help Rebecca & James relive every moment of their special day</SubTitle>
@@ -803,6 +800,7 @@ export default function PhotoUploadPage() {
           View the shared gallery →
         </ViewGalleryLink>
       </Card>
-    </PageWrap>
+      </PageContent>
+    </Layout>
   )
 }
